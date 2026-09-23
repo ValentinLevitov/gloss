@@ -1,0 +1,1096 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "Model": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Модель"
+          }
+        }
+      }
+    },
+    "System translator": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системный переводчик"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        }
+      }
+    },
+    "Couldn't save the key to Keychain": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось сохранить ключ в Keychain"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Nothing yet": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пока пусто"
+          }
+        }
+      }
+    },
+    "Translations from the app and the system menu will show up here.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Здесь появятся переводы — и из приложения, и из системного меню."
+          }
+        }
+      }
+    },
+    "History": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "История"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        }
+      }
+    },
+    "ru ↔ en": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ru ↔ en"
+          }
+        }
+      }
+    },
+    "Type a word or a text. Then select any fragment to discuss it — the thread keeps its context.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вбей слово или текст. Потом можно выделить любой фрагмент и обсудить его — контекст нити сохраняется."
+          }
+        }
+      }
+    },
+    "Question about the fragment (optional)": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вопрос про фрагмент (можно пустой)"
+          }
+        }
+      }
+    },
+    "Text to translate or a question": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Текст для перевода или вопрос"
+          }
+        }
+      }
+    },
+    "Ask about the translation…": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спросить про перевод…"
+          }
+        }
+      }
+    },
+    "Explain": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Объяснить"
+          }
+        }
+      }
+    },
+    "Discuss": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обсудить"
+          }
+        }
+      }
+    },
+    "No text": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет текста"
+          }
+        }
+      }
+    },
+    "The app did not pass the selected text.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приложение не передало выделенный текст."
+          }
+        }
+      }
+    },
+    "Replace with translation": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заменить переводом"
+          }
+        }
+      }
+    },
+    "The app did not pass the selected text.\nReceived: ": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приложение не передало выделенный текст.\nПолучено: "
+          }
+        }
+      }
+    },
+    "nothing": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ничего"
+          }
+        }
+      }
+    },
+    "API error (%lld): %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка API (%lld): %@"
+          }
+        }
+      }
+    },
+    "The model declined this request. Try another model in Settings.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Модель отказалась отвечать на этот запрос. Попробуй другую модель в настройках."
+          }
+        }
+      }
+    },
+    "The reply hit the token limit — the text is too long, split it up.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ответ обрезан по лимиту токенов — текст слишком длинный, разбей на части."
+          }
+        }
+      }
+    },
+    "unknown error": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "неизвестная ошибка"
+          }
+        }
+      }
+    },
+    "Translate Clipboard": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевести буфер обмена"
+          }
+        }
+      }
+    },
+    "Languages": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Языки"
+          }
+        }
+      }
+    },
+    "Take Photo": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Снять"
+          }
+        }
+      }
+    },
+    "Choose Photo": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Из фото"
+          }
+        }
+      }
+    },
+    "No text found in the photo.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "На фото не найден текст."
+          }
+        }
+      }
+    },
+    "Refresh": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновить"
+          }
+        }
+      }
+    },
+    "Add an API key": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавь API-ключ"
+          }
+        }
+      }
+    },
+    "Keys are stored only in this device's Keychain. Requests go directly to the provider.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ключи хранятся только в Keychain этого устройства. Запросы идут напрямую провайдеру."
+          }
+        }
+      }
+    },
+    "Show all %lld": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать все %lld"
+          }
+        }
+      }
+    },
+    "No %@ API key. Open Settings → Model.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не задан API-ключ %@. Открой Настройки → Модель."
+          }
+        }
+      }
+    },
+    "Prompt": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Промпт"
+          }
+        }
+      }
+    },
+    "Default": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стандартный"
+          }
+        }
+      }
+    },
+    "Custom": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Свой"
+          }
+        }
+      }
+    },
+    "Reset": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить"
+          }
+        }
+      }
+    },
+    "Reset to default": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть стандартный"
+          }
+        }
+      }
+    },
+    "Restore the built-in prompt?": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть встроенный промпт?"
+          }
+        }
+      }
+    },
+    "Placeholders: %@ are filled from the language settings.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Плейсхолдеры %@ подставляются из настроек языков."
+          }
+        }
+      }
+    },
+    "The app relies on <text> tags marking text to translate and on the “Fragment:” prefix for selected fragments — keep those rules.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приложение опирается на теги <text> вокруг текста для перевода и префикс «Fragment:» у выделенных фрагментов — эти правила нужно сохранить."
+          }
+        }
+      }
+    },
+    "My language": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мой язык"
+          }
+        }
+      }
+    },
+    "Foreign language": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Иностранный язык"
+          }
+        }
+      }
+    },
+    "Foreign or any other text is translated into my language; my language is translated into the foreign one. Explanations are written in my language.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Иностранный и любой другой текст переводится на мой язык; мой язык — на иностранный. Объяснения пишутся на моём языке."
+          }
+        }
+      }
+    },
+    "Get a key at %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Взять ключ на %@"
+          }
+        }
+      }
+    },
+    "Key works · %lld models available": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ключ работает · доступно моделей: %lld"
+          }
+        }
+      }
+    },
+    "Setup": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройка"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Далее"
+          }
+        }
+      }
+    },
+    "Skip": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропустить"
+          }
+        }
+      }
+    },
+    "Provider": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Провайдер"
+          }
+        }
+      }
+    },
+    "1 · API key": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 · API-ключ"
+          }
+        }
+      }
+    },
+    "Anthropic (Claude) is the default. More providers can be added later in Settings → Model.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По умолчанию Anthropic (Claude). Остальных провайдеров можно добавить позже в Настройки → Модель."
+          }
+        }
+      }
+    },
+    "Open Default Apps settings": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть настройки приложений по умолчанию"
+          }
+        }
+      }
+    },
+    "2 · System translator": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 · Системный переводчик"
+          }
+        }
+      }
+    },
+    "3 · How to use": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 · Как пользоваться"
+          }
+        }
+      }
+    },
+    "In any app: select text → Translate. The translation streams in a sheet.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В любом приложении: выдели текст → Перевести. Перевод появится в шторке."
+          }
+        }
+      }
+    },
+    "Select a word in the original or the translation → Explain, or Discuss to ask your own question.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выдели слово в оригинале или переводе → Объяснить, или Обсудить, чтобы задать свой вопрос."
+          }
+        }
+      }
+    },
+    "Everything goes into one thread, so the model keeps the context of what you are reading. Open the app to see it all or start a new thread.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Всё идёт в одну нить, и модель держит контекст того, что ты читаешь. Открой приложение, чтобы увидеть всё или начать новую нить."
+          }
+        }
+      }
+    },
+    "In the app: type or paste text, or point the camera at a page.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В приложении: набери или вставь текст, либо наведи камеру на страницу."
+          }
+        }
+      }
+    },
+    "Setup guide": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Руководство по настройке"
+          }
+        }
+      }
+    },
+    "Gloss": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gloss"
+          }
+        }
+      }
+    },
+    "Opens Gloss and translates the copied text.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открывает Gloss и переводит скопированный текст."
+          }
+        }
+      }
+    },
+    "Gloss sends text to an AI model using your own API key. Pick a provider and add a key; the key stays in this device's Keychain.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gloss отправляет текст AI-модели по твоему API-ключу. Выбери провайдера и добавь ключ; он хранится в Keychain этого устройства."
+          }
+        }
+      }
+    },
+    "Make Gloss the system translation app. Then “Translate” in the text selection menu of Books, Safari and other apps opens Gloss instead of Apple Translate.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сделай Gloss системным переводчиком. Тогда «Перевести» в меню выделения текста в Books, Safari и других приложениях будет открывать Gloss вместо Apple Translate."
+          }
+        }
+      }
+    },
+    "In Settings choose Translation → Gloss. Come back here when done.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В Настройках выбери Перевод → Gloss и возвращайся сюда."
+          }
+        }
+      }
+    },
+    "Choose Translation → Gloss there, and “Translate” in the text selection menu will open this app.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбери там Перевод → Gloss, и «Перевести» в меню выделения будет открывать это приложение."
+          }
+        }
+      }
+    },
+    "Text size": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Размер текста"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Внешний вид"
+          }
+        }
+      }
+    },
+    "System": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системный"
+          }
+        }
+      }
+    },
+    "Small": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мелкий"
+          }
+        }
+      }
+    },
+    "Medium": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Средний"
+          }
+        }
+      }
+    },
+    "Large": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Крупный"
+          }
+        }
+      }
+    },
+    "Extra large": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очень крупный"
+          }
+        }
+      }
+    },
+    "Huge": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Огромный"
+          }
+        }
+      }
+    },
+    "Listening…": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Слушаю…"
+          }
+        }
+      }
+    },
+    "Allow microphone and speech recognition in Settings to dictate.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чтобы диктовать, разреши микрофон и распознавание речи в Настройках."
+          }
+        }
+      }
+    },
+    "Dictation is not available for %@ on this device.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Диктовка для языка %@ на этом устройстве недоступна."
+          }
+        }
+      }
+    },
+    "Add to cards": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В карточки"
+          }
+        }
+      }
+    },
+    "Update card": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновить карточку"
+          }
+        }
+      }
+    },
+    "Building a card for “%@”…": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Собираю карточку для «%@»…"
+          }
+        }
+      }
+    },
+    "Added to cards: %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавлено в карточки: %@"
+          }
+        }
+      }
+    },
+    "Couldn't build a card from the model's reply.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось собрать карточку из ответа модели."
+          }
+        }
+      }
+    },
+    "Learning": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учу"
+          }
+        }
+      }
+    },
+    "Learned": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выучено"
+          }
+        }
+      }
+    },
+    "No cards yet": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карточек пока нет"
+          }
+        }
+      }
+    },
+    "Select a word in any translation and choose “Add to cards”.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выдели слово в любом переводе и выбери «В карточки»."
+          }
+        }
+      }
+    },
+    "Cards": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карточки"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить"
+          }
+        }
+      }
+    },
+    "Forms": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Формы"
+          }
+        }
+      }
+    },
+    "Examples": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Примеры"
+          }
+        }
+      }
+    },
+    "Note": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Примечание"
+          }
+        }
+      }
+    },
+    "Mark as learning": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть в изучаемые"
+          }
+        }
+      }
+    },
+    "Mark as learned": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выучено"
+          }
+        }
+      }
+    },
+    "Delete card": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить карточку"
+          }
+        }
+      }
+    },
+    "Delete this card?": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить карточку?"
+          }
+        }
+      }
+    },
+    "Card deleted": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карточка удалена"
+          }
+        }
+      }
+    },
+    "Learned %@ · added %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выучено %@ · добавлено %@"
+          }
+        }
+      }
+    },
+    "Added %@": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавлено %@"
+          }
+        }
+      }
+    },
+    "Study": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учить"
+          }
+        }
+      }
+    },
+    "Words you forget will come up more often.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Слова, которые забываешь, будут попадаться чаще."
+          }
+        }
+      }
+    },
+    "Forgot": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Забыл"
+          }
+        }
+      }
+    },
+    "Remember": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помню"
+          }
+        }
+      }
+    },
+    "All cards learned": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все карточки выучены"
+          }
+        }
+      }
+    },
+    "Add more words from your translations to keep studying.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавь ещё слов из переводов, чтобы продолжить."
+          }
+        }
+      }
+    },
+    "%lld · %lld · %lld left": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld · %lld · осталось %lld"
+          }
+        }
+      }
+    },
+    "“%@” is learned": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» выучено"
+          }
+        }
+      }
+    }
+  }
+}
