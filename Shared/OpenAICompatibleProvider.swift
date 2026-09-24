@@ -56,7 +56,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
         var request = try request("chat/completions", method: "POST")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (bytes, response) = try await URLSession.shared.bytes(for: request)
+        let (bytes, response) = try await ProviderHTTP.session.bytes(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard status == 200 else {
             var data = Data()
@@ -88,7 +88,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
 
     func listModels() async throws -> [ModelOption] {
         let path = kind == .xai ? "language-models" : "models"
-        let (data, response) = try await URLSession.shared.data(for: request(path))
+        let (data, response) = try await ProviderHTTP.session.data(for: request(path))
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard status == 200 else {
             throw TranslationError.api(status: status, message: ProviderHTTP.errorMessage(from: data))

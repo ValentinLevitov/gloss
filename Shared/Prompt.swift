@@ -77,8 +77,7 @@ enum Prompt {
     }
 
     /// Picks the target language from the on-device language detector and the user's pair.
-    static func targetLanguage(for text: String) -> Language? {
-        let languages = LanguageSettings.current
+    static func targetLanguage(for text: String, pair languages: LanguageSettings = .current) -> Language? {
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(text)
         guard let dominant = recognizer.dominantLanguage,

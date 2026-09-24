@@ -45,7 +45,7 @@ struct AnthropicProvider: TranslationProvider {
         }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (bytes, response) = try await URLSession.shared.bytes(for: request)
+        let (bytes, response) = try await ProviderHTTP.session.bytes(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard status == 200 else {
             var data = Data()
@@ -95,7 +95,7 @@ struct AnthropicProvider: TranslationProvider {
             request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
             request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
 
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await ProviderHTTP.session.data(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             guard status == 200 else {
                 throw TranslationError.api(status: status, message: ProviderHTTP.errorMessage(from: data))
@@ -111,7 +111,7 @@ struct AnthropicProvider: TranslationProvider {
         return ProviderHTTP.collapseSnapshots(sorted)
     }
 
-    private static func model(from item: [String: Any]) -> ModelOption? {
+    static func model(from item: [String: Any]) -> ModelOption? {
         guard let id = item["id"] as? String else { return nil }
         let caps = item["capabilities"] as? [String: Any] ?? [:]
         func supported(_ path: [String]) -> Bool {

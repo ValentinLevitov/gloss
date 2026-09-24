@@ -100,16 +100,24 @@ final class CardStore {
     /// form (lowercased) → card
     private(set) var index: [String: FlashCard] = [:]
 
-    private static var fileURL: URL {
+    private let fileURL: URL
+
+    private static var defaultFileURL: URL {
         let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)
             ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return dir.appendingPathComponent("cards.json")
     }
 
-    private init() { reload() }
+    private convenience init() { self.init(fileURL: Self.defaultFileURL) }
+
+    /// Tests pass a temporary file.
+    init(fileURL: URL) {
+        self.fileURL = fileURL
+        reload()
+    }
 
     func reload() {
-        let loaded = (try? Data(contentsOf: Self.fileURL)).flatMap { try? JSONDecoder().decode([FlashCard].self, from: $0) } ?? []
+        let loaded = (try? Data(contentsOf: fileURL)).flatMap { try? JSONDecoder().decode([FlashCard].self, from: $0) } ?? []
         cards = loaded.sorted { $0.addedAt > $1.addedAt }
         rebuildIndex()
     }
@@ -181,7 +189,7 @@ final class CardStore {
 
     private func save() {
         if let data = try? JSONEncoder().encode(cards) {
-            try? data.write(to: Self.fileURL, options: .atomic)
+            try? data.write(to: fileURL, options: .atomic)
         }
         rebuildIndex()
     }
