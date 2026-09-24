@@ -107,3 +107,16 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Translator
+schemes:
+  Translator:
+    build:
+      targets:
+        Translator: all
+        UITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      testPlans:
+        - path: Demo.xctestplan
+          defaultPlan: true

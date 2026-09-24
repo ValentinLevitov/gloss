@@ -1,0 +1,6 @@
+{
+  "configurations" : [ { "id" : "A1B2C3D4-0000-0000-0000-000000000001", "name" : "Recording", "options" : { "preferredScreenCaptureFormat" : "screenRecording", "uiTestingScreenshotsLifetime" : "keepAlways" } } ],
+  "defaultOptions" : { "preferredScreenCaptureFormat" : "screenRecording", "uiTestingScreenshotsLifetime" : "keepAlways" },
+  "testTargets" : [ { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UITests", "name" : "UITests" }, "selectedTests" : [ "DemoFlow/testDemo()" ] } ],
+  "version" : 1
+}
