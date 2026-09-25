@@ -1121,6 +1121,26 @@
           }
         }
       }
+    },
+    "Translate instead": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевести, а не спросить"
+          }
+        }
+      }
+    },
+    "Ask a question instead": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Задать вопрос, а не перевести"
+          }
+        }
+      }
     }
   }
 }

@@ -43,12 +43,28 @@ struct ComposerView: View {
                 if let onPhoto { photoMenu(onPhoto) }
                 if let dictation { micMenu(dictation) }
 
-                TextField(placeholder, text: $session.draft, axis: .vertical)
-                    .lineLimit(1...6)
-                    .focused(focused)
+                if isRecording {
+                    // While dictating the field is not focused (no keyboard), so show the transcript in a view that
+                    // keeps its tail visible instead of a text field stuck at its first lines.
+                    ScrollView {
+                        Text(session.draft.isEmpty ? String(localized: "Listening…") : session.draft)
+                            .foregroundStyle(session.draft.isEmpty ? .secondary : .primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .defaultScrollAnchor(.bottom)
+                    .frame(maxHeight: 132)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .modifier(FieldChrome())
+                } else {
+                    TextField(placeholder, text: $session.draft, axis: .vertical)
+                        .lineLimit(1...6)
+                        .focused(focused)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .modifier(FieldChrome())
+                }
 
                 buttons
             }
@@ -101,29 +117,30 @@ struct ComposerView: View {
             ProgressView().padding(.bottom, 8).padding(.trailing, 6)
         } else if session.isLoading {
             Button { session.cancel() } label: { Image(systemName: "stop.circle.fill").font(.title) }
-        } else {
-            askButton(prominent: !allowsTranslate || session.quote != nil)
-                .disabled(session.quote == nil && !hasDraft)
-            if allowsTranslate {
-                if session.quote != nil {
-                    // With a fragment attached, the draft is a question about it, never text to translate.
-                    Button { sendQuestion() } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }
-                } else if hasDraft {
-                    Button {
-                        send { session.translate($0) }
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill").font(.title)
-                    }
-                } else {
-                    // System paste button: iOS does not prompt, the tap itself is the permission.
-                    PasteButton(payloadType: String.self) { strings in
-                        if let pasted = strings.first { session.translate(pasted) }
-                    }
-                    .labelStyle(.iconOnly)
-                    .buttonBorderShape(.circle)
-                    .padding(.bottom, 2)
-                }
+        } else if session.quote == nil, !hasDraft, allowsTranslate {
+            // System paste button: iOS does not prompt, the tap itself is the permission.
+            PasteButton(payloadType: String.self) { strings in
+                if let pasted = strings.first { session.translate(pasted) }
             }
+            .labelStyle(.iconOnly)
+            .buttonBorderShape(.circle)
+            .padding(.bottom, 2)
+        } else {
+            // One send button. With a fragment attached (or in the sheet) it asks; otherwise it translates.
+            // Long-press offers the other action for the rare free-standing question.
+            let asks = session.quote != nil || !allowsTranslate
+            Menu {
+                if asks, allowsTranslate {
+                    Button { send { session.translate($0) } } label: { Label("Translate instead", systemImage: "character.book.closed") }
+                } else if allowsTranslate {
+                    Button { sendQuestion() } label: { Label("Ask a question instead", systemImage: "bubble.left") }
+                }
+            } label: {
+                Image(systemName: asks ? "arrow.up.circle.fill" : "arrow.up.circle.fill").font(.title)
+            } primaryAction: {
+                if asks { sendQuestion() } else { send { session.translate($0) } }
+            }
+            .disabled(session.quote == nil && !hasDraft)
         }
     }
 
@@ -131,14 +148,6 @@ struct ComposerView: View {
         let quote = session.quote
         session.quote = nil
         send { session.ask($0, quote: quote) }
-    }
-
-    private func askButton(prominent: Bool) -> some View {
-        Button {
-            sendQuestion()
-        } label: {
-            Image(systemName: prominent ? "bubble.left.circle.fill" : "bubble.left.circle").font(.title)
-        }
     }
 
     private func send(_ action: (String) -> Void) {
