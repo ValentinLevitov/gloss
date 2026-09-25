@@ -96,19 +96,10 @@ struct ThreadView: View {
 
     /// One tap to make a card for a word that was translated on its own; the reply is the card's context.
     private func addCardButton(for message: ThreadMessage) -> some View {
-        let existing = CardStore.shared.card(for: message.text)
         let reply = session.messages.first { $0.role == .assistant && $0.date >= message.date }?.text ?? message.text
-        return Button {
+        return AddCardButton(word: message.text, session: session) {
             session.addCard(word: message.text, context: reply)
-        } label: {
-            Label(existing == nil ? "Add to cards" : "Update card",
-                  systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
-                .labelStyle(.iconOnly)
-                .font(.title3)
         }
-        .buttonStyle(.borderless)
-        .disabled(session.buildingCardFor != nil || session.isLoading)
-        .accessibilityLabel(existing == nil ? "Add to cards" : "Update card")
     }
 
     private func selectable(_ markdown: String, style: UIFont.TextStyle, color: UIColor) -> some View {
@@ -135,5 +126,24 @@ struct QuoteLabel: View {
             .overlay(alignment: .leading) {
                 Capsule().fill(.secondary.opacity(0.6)).frame(width: 2.5)
             }
+    }
+}
+
+/// The same "Add to cards" control everywhere: bordered capsule, icon and text.
+struct AddCardButton: View {
+    let word: String
+    let session: ConversationSession
+    let action: () -> Void
+
+    var body: some View {
+        let existing = CardStore.shared.card(for: word)
+        Button(action: action) {
+            Label(existing == nil ? "Add to cards" : "Update card",
+                  systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .tint(.secondary)
+        .disabled(session.buildingCardFor != nil || session.isLoading)
     }
 }

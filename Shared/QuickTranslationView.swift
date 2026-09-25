@@ -37,18 +37,11 @@ struct QuickTranslationView: View {
                 }
 
                 if isShortSelection, started {
-                    let existing = CardStore.shared.card(for: sourceText)
                     HStack {
                         Spacer()
-                        Button {
+                        AddCardButton(word: sourceText, session: session) {
                             session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
-                        } label: {
-                            Label(existing == nil ? "Add to cards" : "Update card",
-                                  systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                        .disabled(session.buildingCardFor != nil)
                     }
                 }
 
