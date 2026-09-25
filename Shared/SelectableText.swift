@@ -71,8 +71,7 @@ struct SelectableText: UIViewRepresentable {
         let full = NSRange(location: 0, length: string.length)
 
         for (phrase, card) in store.phraseIndex {
-            let pattern = "(?<!\\p{L})" + NSRegularExpression.escapedPattern(for: phrase).replacingOccurrences(of: " ", with: "\\s+") + "(?!\\p{L})"
-            guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { continue }
+            guard let regex = try? NSRegularExpression(pattern: Self.phrasePattern(phrase), options: .caseInsensitive) else { continue }
             for match in regex.matches(in: text.string, range: full) {
                 text.addAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue,
                                     .underlineColor: tint(for: card)], range: match.range)
@@ -85,6 +84,26 @@ struct SelectableText: UIViewRepresentable {
             guard let card = store.wordIndex[word] else { continue }
             text.addAttributes([.backgroundColor: tint(for: card).withAlphaComponent(0.22)], range: match.range)
         }
+    }
+
+    /// "pick something up" → pick, then 1–3 words, then up. A two-word phrasal verb without a written slot
+    /// ("pick up") also allows an object in between, so "pick him up" lights up too.
+    static func phrasePattern(_ phrase: String) -> String {
+        let gap = "(?:\\s+\\S+){0,3}?"
+        let words = phrase.split(separator: " ").map(String.init)
+        var parts: [String] = []
+        for word in words {
+            if FlashCard.slotWords.contains(word.lowercased()) {
+                parts.append("(?:\\s+\\S+){1,3}?")
+            } else {
+                parts.append((parts.isEmpty ? "" : "\\s+") + NSRegularExpression.escapedPattern(for: word))
+            }
+        }
+        var body = parts.joined()
+        if words.count == 2, !words.contains(where: { FlashCard.slotWords.contains($0.lowercased()) }) {
+            body = NSRegularExpression.escapedPattern(for: words[0]) + gap + "\\s+" + NSRegularExpression.escapedPattern(for: words[1])
+        }
+        return "(?<!\\p{L})" + body + "(?!\\p{L})"
     }
 
     private static func tint(for card: FlashCard) -> UIColor {

@@ -87,6 +87,9 @@ struct FlashCard: Identifiable, Codable, Hashable {
         lastShownAt = try c.decodeIfPresent(Date.self, forKey: .lastShownAt)
     }
 
+    /// Slot words the model uses in headwords ("pick something up"); matched as up to three arbitrary words.
+    static let slotWords: Set<String> = ["someone", "something", "somebody", "sb", "sth", "one's", "oneself", "someone's"]
+
     /// Every spelling that should light up in a text.
     var allForms: Set<String> {
         var set: Set<String> = [headword.lowercased(), sourceWord.lowercased()]

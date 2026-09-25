@@ -18,6 +18,7 @@ enum CardBuilder {
 
         Rules:
         - "headword" is the dictionary form: singular for nouns, infinitive for verbs (without "to"), base form for adjectives. Keep multi-word phrases as phrases.
+        - For separable phrasal verbs and idioms with an object slot, write the slot as "someone" or "something" in the headword and forms: "pick something up", "give someone the cold shoulder", "take something for granted".
         - "language" is the ISO 639-1 code of the word's language.
         - Write "translations", "note" and example translations in \(languages.native.englishName); \
         if the word itself is in \(languages.native.englishName), translate into \(languages.foreign.englishName).
