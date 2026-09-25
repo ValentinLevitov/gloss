@@ -105,7 +105,10 @@ struct ComposerView: View {
             askButton(prominent: !allowsTranslate || session.quote != nil)
                 .disabled(session.quote == nil && !hasDraft)
             if allowsTranslate {
-                if hasDraft {
+                if session.quote != nil {
+                    // With a fragment attached, the draft is a question about it, never text to translate.
+                    Button { sendQuestion() } label: { Image(systemName: "arrow.up.circle.fill").font(.title) }
+                } else if hasDraft {
                     Button {
                         send { session.translate($0) }
                     } label: {
@@ -124,11 +127,15 @@ struct ComposerView: View {
         }
     }
 
+    private func sendQuestion() {
+        let quote = session.quote
+        session.quote = nil
+        send { session.ask($0, quote: quote) }
+    }
+
     private func askButton(prominent: Bool) -> some View {
         Button {
-            let quote = session.quote
-            session.quote = nil
-            send { session.ask($0, quote: quote) }
+            sendQuestion()
         } label: {
             Image(systemName: prominent ? "bubble.left.circle.fill" : "bubble.left.circle").font(.title)
         }
