@@ -6,11 +6,15 @@ struct ThreadView: View {
     let session: ConversationSession
     /// Extensions show only what appeared after they opened; the rest of the thread is context for the model.
     var fromIndex = 0
+    /// The host shows the first source text itself (sticky header in the sheet), so the feed skips it.
+    var hidesFirstSource = false
     /// Called when a fragment is picked via "Discuss", so the host can focus the question field.
     var onDiscuss: () -> Void = {}
 
     private var visible: ArraySlice<ThreadMessage> {
-        session.messages.dropFirst(min(fromIndex, session.messages.count))
+        var slice = session.messages.dropFirst(min(fromIndex, session.messages.count))
+        if hidesFirstSource, slice.first?.role == .user, slice.first?.kind == .translation { slice = slice.dropFirst() }
+        return slice
     }
 
     var body: some View {

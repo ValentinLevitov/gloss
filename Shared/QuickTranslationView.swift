@@ -15,6 +15,33 @@ struct QuickTranslationView: View {
     @State private var waitedTooLong = false
     @FocusState private var composerFocused: Bool
 
+    /// The selected text stays visible while the translation scrolls underneath.
+    private var sourceHeader: some View {
+        HStack(alignment: .top, spacing: 10) {
+            SelectableText(markdown: sourceText, textStyle: .callout, color: .secondaryLabel,
+                           onExplain: { session.ask("", quote: $0) },
+                           onDiscuss: { session.quote = $0; composerFocused = true },
+                           onAddCard: { session.addCard(word: $0, context: session.messages.last?.text ?? sourceText) },
+                           cardsVersion: CardStore.shared.version)
+                .frame(maxHeight: 64)
+            if isShortSelection {
+                AddCardButton(word: sourceText, session: session) {
+                    session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.bar)
+        .overlay(alignment: .bottom) { Divider() }
+    }
+
+    private var isShortSelection: Bool {
+        let words = sourceText.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
+        return !words.isEmpty && words.count <= 2
+    }
+
     private var lastTranslation: String? {
         session.messages.last { $0.role == .assistant && $0.kind == .translation && !$0.text.isEmpty }?.text
     }
@@ -31,7 +58,7 @@ struct QuickTranslationView: View {
                     }
                 }
 
-                ThreadView(session: session, fromIndex: firstIndex) { composerFocused = true }
+                ThreadView(session: session, fromIndex: firstIndex, hidesFirstSource: true) { composerFocused = true }
 
                 if let onReplace, !session.isLoading, let translation = lastTranslation {
                     Button {
@@ -50,6 +77,9 @@ struct QuickTranslationView: View {
         .defaultScrollAnchor(session.messages.count > firstIndex + 2 ? .bottom : .top, for: .sizeChanges)
         .scrollDismissesKeyboard(.interactively)
         .scrollContentBackground(.hidden)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if started { sourceHeader }
+        }
         .safeAreaInset(edge: .bottom) {
             ComposerView(session: session, allowsTranslate: false, focused: $composerFocused, glass: true)
         }
