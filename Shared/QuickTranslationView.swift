@@ -15,11 +15,6 @@ struct QuickTranslationView: View {
     @State private var waitedTooLong = false
     @FocusState private var composerFocused: Bool
 
-    private var isShortSelection: Bool {
-        let words = sourceText.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
-        return !words.isEmpty && words.count <= 2 && CardStore.shared.version >= 0
-    }
-
     private var lastTranslation: String? {
         session.messages.last { $0.role == .assistant && $0.kind == .translation && !$0.text.isEmpty }?.text
     }
@@ -33,15 +28,6 @@ struct QuickTranslationView: View {
                                                description: Text("The app did not pass the selected text."))
                     } else {
                         ProgressView().frame(maxWidth: .infinity)
-                    }
-                }
-
-                if isShortSelection, started {
-                    HStack {
-                        Spacer()
-                        AddCardButton(word: sourceText, session: session) {
-                            session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
-                        }
                     }
                 }
 
