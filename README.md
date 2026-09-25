@@ -20,6 +20,22 @@ open Translator.xcodeproj
 
 Set your `DEVELOPMENT_TEAM` in `project.yml`. The default-translation-app entitlement (`com.apple.developer.translation-app`) requires a paid Apple Developer Program membership; a Personal Team can build everything else.
 
+## Tests
+
+```sh
+xcodebuild -project Translator.xcodeproj -scheme Translator -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -testPlan CI test
+```
+
+- `UnitTests/` — pure logic: conversation budget and prompt shape, model-list parsing, flashcard JSON and study
+  scheduling, dictation and Books-text heuristics, and the three provider stream parsers against canned SSE
+  bodies served by a `URLProtocol` stub (no network, no real keys).
+- `UITests/SmokeTests` — launches the app on a simulator with no key and expects the Setup screen.
+- `UITests/` also holds flows that drive the simulator or a device for App Store screenshots and the review
+  demo recording (`Demo.xctestplan`); those are not part of CI.
+
+CI runs the `CI` test plan on every push (`.github/workflows/ci.yml`).
+
 ## Layout
 
 - `App/` — the app: main thread, settings, model picker, onboarding, cards, study mode, camera and dictation.

@@ -108,7 +108,7 @@ final class SpeechRecorder {
     }
 
     /// True when `next` looks like a revision of `previous` (same opening words) rather than a restart.
-    private static func continues(previous: String, next: String) -> Bool {
+    nonisolated static func continues(previous: String, next: String) -> Bool {
         let head = previous.split(separator: " ").prefix(2).joined(separator: " ").lowercased()
         let nextLower = next.lowercased()
         if next.count >= previous.count { return nextLower.hasPrefix(head) || head.count < 4 }

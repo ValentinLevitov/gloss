@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Unit + smoke tests (iOS Simulator)
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          # Newest Xcode on the image (27 when available, otherwise the latest 26.x).
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen xcbeautify
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json,sys
+          d=json.load(sys.stdin)["devices"]
+          cands=[dev for rt,devs in d.items() if "iOS" in rt for dev in devs if dev["name"].startswith("iPhone")]
+          cands.sort(key=lambda x: x["name"])
+          print(cands[-1]["udid"])')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$UDID" || true
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          xcodebuild -project Translator.xcodeproj -scheme Translator \
+            -sdk iphonesimulator -destination "id=${{ steps.sim.outputs.udid }}" \
+            -testPlan CI -derivedDataPath build/ci -resultBundlePath build/ci.xcresult \
+            test | xcbeautify --renderer github-actions
+
+      - name: Upload result bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci.xcresult
+          path: build/ci.xcresult
+          if-no-files-found: ignore

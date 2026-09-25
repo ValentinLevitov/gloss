@@ -1,0 +1,9 @@
+{
+  "configurations" : [ { "id" : "A1B2C3D4-0000-0000-0000-000000000002", "name" : "CI", "options" : { } } ],
+  "defaultOptions" : { "codeCoverage" : true },
+  "testTargets" : [
+    { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UnitTests", "name" : "UnitTests" } },
+    { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UITests", "name" : "UITests" }, "selectedTests" : [ "SmokeTests/testFreshInstallShowsSetup()" ] }
+  ],
+  "version" : 1
+}

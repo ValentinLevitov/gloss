@@ -30,7 +30,7 @@ struct GeminiProvider: TranslationProvider {
                                       query: [URLQueryItem(name: "alt", value: "sse")], method: "POST")
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-            let (bytes, response) = try await URLSession.shared.bytes(for: request)
+            let (bytes, response) = try await ProviderHTTP.session.bytes(for: request)
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             guard status == 200 else {
                 var data = Data()
@@ -69,7 +69,7 @@ struct GeminiProvider: TranslationProvider {
         repeat {
             var query = [URLQueryItem(name: "pageSize", value: "1000")]
             if let pageToken { query.append(URLQueryItem(name: "pageToken", value: pageToken)) }
-            let (data, response) = try await URLSession.shared.data(for: request("models", query: query))
+            let (data, response) = try await ProviderHTTP.session.data(for: request("models", query: query))
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
             guard status == 200 else {
                 throw TranslationError.api(status: status, message: ProviderHTTP.errorMessage(from: data))

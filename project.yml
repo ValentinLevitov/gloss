@@ -96,6 +96,17 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.vlevitov.translator
+  UnitTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - UnitTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vlevitov.translator.unittests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Translator
   UITests:
     type: bundle.ui-testing
     platform: iOS
@@ -107,3 +118,18 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Translator
+schemes:
+  Translator:
+    build:
+      targets:
+        Translator: all
+        UnitTests: [test]
+        UITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      testPlans:
+        - path: CI.xctestplan
+          defaultPlan: true
+        - path: Demo.xctestplan

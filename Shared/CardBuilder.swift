@@ -39,7 +39,7 @@ enum CardBuilder {
         return try parse(reply, sourceWord: word)
     }
 
-    private static func parse(_ reply: String, sourceWord: String) throws -> FlashCard {
+    static func parse(_ reply: String, sourceWord: String) throws -> FlashCard {
         guard let start = reply.firstIndex(of: "{"), let end = reply.lastIndex(of: "}") else { throw BuildError.badReply }
         let json = Data(reply[start...end].utf8)
         guard let object = try? JSONSerialization.jsonObject(with: json) as? [String: Any],

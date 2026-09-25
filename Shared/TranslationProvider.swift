@@ -133,6 +133,9 @@ enum Providers {
 
 /// Helpers shared by the HTTP providers.
 enum ProviderHTTP {
+    /// Swapped for a stubbed session in tests.
+    nonisolated(unsafe) static var session: URLSession = .shared
+
     static func errorMessage(from data: Data) -> String {
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
             if let error = json["error"] as? [String: Any], let message = error["message"] as? String { return message }
