@@ -39,9 +39,9 @@ struct ComposerView: View {
             }
 
             HStack(alignment: .bottom, spacing: 8) {
-                if let onPhoto, !session.isLoading, session.quote == nil, !hasDraft, !isRecording {
-                    photoMenu(onPhoto)
-                }
+                // The same controls in every state: camera and mic on the left, question and translate on the right.
+                if let onPhoto { photoMenu(onPhoto) }
+                if let dictation { micMenu(dictation) }
 
                 TextField(placeholder, text: $session.draft, axis: .vertical)
                     .lineLimit(1...6)
@@ -72,48 +72,55 @@ struct ComposerView: View {
             Image(systemName: "camera").font(.title3)
         }
         .padding(.bottom, 8)
+        .disabled(session.isLoading || dictation?.isRecording == true)
     }
 
     private func micMenu(_ dictation: DictationControl) -> some View {
         let languages = LanguageSettings.current
-        return Menu {
-            Button { dictation.start(languages.foreign) } label: { Label(languages.foreign.name, systemImage: "mic") }
-            Button { dictation.start(languages.native) } label: { Label(languages.native.name, systemImage: "mic") }
-        } label: {
-            Image(systemName: "mic").font(.title3)
+        return Group {
+            if dictation.isRecording {
+                Button { dictation.stop() } label: {
+                    Image(systemName: "stop.circle.fill").font(.title3).foregroundStyle(.red)
+                }
+            } else {
+                Menu {
+                    Button { dictation.start(languages.foreign) } label: { Label(languages.foreign.name, systemImage: "mic") }
+                    Button { dictation.start(languages.native) } label: { Label(languages.native.name, systemImage: "mic") }
+                } label: {
+                    Image(systemName: "mic").font(.title3)
+                }
+            }
         }
         .padding(.bottom, 8)
+        .disabled(session.isLoading)
     }
 
     @ViewBuilder
     private var buttons: some View {
-        if let dictation, dictation.isRecording {
-            Button { dictation.stop() } label: {
-                Image(systemName: "stop.circle.fill").font(.title).foregroundStyle(.red)
-            }
-        } else if session.isRecognizing {
+        if session.isRecognizing {
             ProgressView().padding(.bottom, 8).padding(.trailing, 6)
         } else if session.isLoading {
             Button { session.cancel() } label: { Image(systemName: "stop.circle.fill").font(.title) }
-        } else if session.quote != nil || !allowsTranslate {
-            askButton(prominent: true)
-                .disabled(session.quote == nil && !hasDraft)
-        } else if hasDraft {
-            askButton(prominent: false)
-            Button {
-                send { session.translate($0) }
-            } label: {
-                Image(systemName: "arrow.up.circle.fill").font(.title)
-            }
         } else {
-            if let dictation { micMenu(dictation) }
-            // System paste button: iOS does not prompt, the tap itself is the permission.
-            PasteButton(payloadType: String.self) { strings in
-                if let pasted = strings.first { session.translate(pasted) }
+            askButton(prominent: !allowsTranslate || session.quote != nil)
+                .disabled(session.quote == nil && !hasDraft)
+            if allowsTranslate {
+                if hasDraft {
+                    Button {
+                        send { session.translate($0) }
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill").font(.title)
+                    }
+                } else {
+                    // System paste button: iOS does not prompt, the tap itself is the permission.
+                    PasteButton(payloadType: String.self) { strings in
+                        if let pasted = strings.first { session.translate(pasted) }
+                    }
+                    .labelStyle(.iconOnly)
+                    .buttonBorderShape(.circle)
+                    .padding(.bottom, 2)
+                }
             }
-            .labelStyle(.iconOnly)
-            .buttonBorderShape(.circle)
-            .padding(.bottom, 2)
         }
     }
 
