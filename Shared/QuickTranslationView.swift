@@ -36,20 +36,23 @@ struct QuickTranslationView: View {
                     }
                 }
 
-                ThreadView(session: session, fromIndex: firstIndex) { composerFocused = true }
-
-                if isShortSelection, !session.isLoading, started {
+                if isShortSelection, started {
                     let existing = CardStore.shared.card(for: sourceText)
-                    Button {
-                        session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
-                    } label: {
-                        Label(existing == nil ? "Add to cards" : "Update card",
-                              systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
+                    HStack {
+                        Spacer()
+                        Button {
+                            session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
+                        } label: {
+                            Label(existing == nil ? "Add to cards" : "Update card",
+                                  systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .disabled(session.buildingCardFor != nil)
                     }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .disabled(session.buildingCardFor != nil)
                 }
+
+                ThreadView(session: session, fromIndex: firstIndex) { composerFocused = true }
 
                 if let onReplace, !session.isLoading, let translation = lastTranslation {
                     Button {

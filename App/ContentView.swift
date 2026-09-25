@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showOnboarding = false
     @State private var showHistory = false
     @State private var showCards = false
+    @State private var showStudy = false
     @State private var showCamera = false
     @State private var showLibrary = false
     @State private var pickedItem: PhotosPickerItem?
@@ -35,7 +36,13 @@ struct ContentView: View {
                     }
                 }
             }
-            .safeAreaInset(edge: .bottom) { composer }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 0) {
+                    StudyBanner(isPresented: $showStudy)
+                    composer
+                }
+            }
+            .fullScreenCover(isPresented: $showStudy) { StudyView() }
             .navigationTitle("Gloss")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -162,5 +169,29 @@ private struct DictationBridge: ViewModifier {
             .onChange(of: recorder.errorMessage) { _, message in
                 if let message { session.errorMessage = message }
             }
+    }
+}
+
+/// One-tap way into study mode, shown above the composer while there are cards to learn.
+private struct StudyBanner: View {
+    @Binding var isPresented: Bool
+    private var count: Int { CardStore.shared.cards.filter { !$0.isLearned }.count }
+
+    var body: some View {
+        if count > 0 {
+            Button { isPresented = true } label: {
+                HStack {
+                    Label("\(count) words to learn", systemImage: "rectangle.stack")
+                    Spacer()
+                    Text("Study").fontWeight(.semibold)
+                    Image(systemName: "chevron.right").font(.caption)
+                }
+                .font(.subheadline)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+            }
+            .tint(.primary)
+            .background(.bar)
+        }
     }
 }

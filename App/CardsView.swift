@@ -31,9 +31,19 @@ struct CardsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) { Button("Close") { dismiss() } }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { showStudy = true } label: { Label("Study", systemImage: "play.fill") }
-                        .disabled(!store.cards.contains { !$0.isLearned })
+            }
+            .safeAreaInset(edge: .bottom) {
+                if store.cards.contains(where: { !$0.isLearned }) {
+                    Button { showStudy = true } label: {
+                        Label("Study", systemImage: "rectangle.stack")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .padding()
+                    .background(.bar)
                 }
             }
             .fullScreenCover(isPresented: $showStudy) { StudyView() }

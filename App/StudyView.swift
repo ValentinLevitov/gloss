@@ -1,17 +1,15 @@
 import AVFoundation
 import SwiftUI
 
-/// Flashcard drill: one big card, tap to flip, swipe right = remember, left = forgot.
+/// Flashcard drill: one card, tap to reveal, swipe right = remember, left = forgot.
 struct StudyView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var card: FlashCard?
-    @State private var flipped = false
+    @State private var revealed = false
     @State private var offset: CGSize = .zero
-    @State private var remembered = 0
-    @State private var forgot = 0
-    @State private var graduatedWord: String?
-    @State private var upcoming: FlashCard?
+    @State private var reviewed = 0
     @State private var recent: [UUID] = []
+    @State private var graduatedWord: String?
     @State private var synthesizer = AVSpeechSynthesizer()
 
     private var store: CardStore { CardStore.shared }
@@ -20,43 +18,32 @@ struct StudyView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(colors: [Color(red: 0.2, green: 0.45, blue: 1), Color(red: 0.1, green: 0.24, blue: 0.75)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
+                Color(.systemGroupedBackground).ignoresSafeArea()
 
                 if let card {
-                    VStack(spacing: 24) {
-                        Text("Words you forget will come up more often.")
+                    VStack(spacing: 20) {
+                        Spacer(minLength: 0)
+
+                        cardFace(card)
+                            .offset(offset)
+                            .rotationEffect(.degrees(Double(offset.width / 24)))
+                            .overlay(alignment: .top) { verdictHint }
+                            .gesture(dragGesture(card))
+                            .onTapGesture { withAnimation(.easeInOut(duration: 0.25)) { revealed.toggle() } }
+                            .animation(.spring(duration: 0.3), value: offset)
+
+                        Text(revealed ? "Swipe right if you remembered it, left if not." : "Tap the card to see the translation.")
                             .font(.footnote)
-                            .foregroundStyle(.white.opacity(0.75))
-                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
 
-                        Spacer()
+                        Spacer(minLength: 0)
 
-                        ZStack {
-                            if let next = upcoming {
-                                cardFace(next, flipped: false)
-                                    .scaleEffect(0.94)
-                                    .offset(y: 18)
-                                    .opacity(0.7)
-                            }
-                            cardFace(card, flipped: flipped)
-                                .offset(offset)
-                                .rotationEffect(.degrees(Double(offset.width / 20)))
-                                .overlay(alignment: .top) { verdictHint }
-                                .gesture(dragGesture(card))
-                                .onTapGesture { withAnimation(.spring(duration: 0.35)) { flipped.toggle() } }
-                                .animation(.spring(duration: 0.3), value: offset)
-                        }
-
-                        Spacer()
-
-                        HStack(spacing: 16) {
-                            verdictButton("Forgot", systemImage: "arrow.uturn.backward", tint: .orange) { commit(card, known: false) }
-                            verdictButton("Remember", systemImage: "checkmark", tint: .green) { commit(card, known: true) }
+                        HStack(spacing: 12) {
+                            verdictButton("Forgot", systemImage: "arrow.uturn.backward", prominent: false) { commit(card, known: false) }
+                            verdictButton("Remember", systemImage: "checkmark", prominent: true) { commit(card, known: true) }
                         }
                     }
-                    .frame(maxWidth: 520)   // keeps the card a card on iPad
+                    .frame(maxWidth: 520)
                     .padding()
                 } else {
                     ContentUnavailableView("All cards learned", systemImage: "checkmark.seal",
@@ -65,41 +52,33 @@ struct StudyView: View {
             }
             .navigationTitle("Study")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 1) {
                         Text("Study").font(.headline)
-                        Text("\(remembered) · \(forgot) · \(remaining) left").font(.caption2).opacity(0.75)
+                        Text("\(reviewed) reviewed · \(remaining) to learn").font(.caption2).foregroundStyle(.secondary)
                     }
-                    .foregroundStyle(.white)
                 }
             }
             .overlay(alignment: .bottom) {
                 if let graduatedWord {
                     Label("“\(graduatedWord)” is learned", systemImage: "checkmark.seal.fill")
+                        .font(.callout)
                         .padding(.horizontal, 14).padding(.vertical, 8)
-                        .background(.green.opacity(0.9), in: Capsule())
-                        .foregroundStyle(.white)
-                        .padding(.bottom, 100)
+                        .background(.thinMaterial, in: Capsule())
+                        .padding(.bottom, 96)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .onAppear {
-                if card == nil {
-                    card = store.nextToStudy(excluding: [])
-                    upcoming = store.nextToStudy(excluding: [card?.id].compactMap { $0 })
-                }
-            }
+            .onAppear { if card == nil { card = store.nextToStudy(excluding: []) } }
         }
     }
 
-    private func cardFace(_ card: FlashCard, flipped: Bool) -> some View {
-        VStack(spacing: 14) {
+    private func cardFace(_ card: FlashCard) -> some View {
+        VStack(spacing: 12) {
             HStack {
                 Text(card.language.uppercased())
-                streakDots(card)
                 Spacer()
                 if !card.level.isEmpty { LevelBadge(level: card.level) }
                 if !card.partOfSpeech.isEmpty { Text(card.partOfSpeech).italic() }
@@ -109,31 +88,38 @@ struct StudyView: View {
 
             Spacer()
 
-            if flipped {
-                Text(card.translations.joined(separator: ", "))
-                    .font(.title.weight(.semibold))
+            if let example = card.examples.first {
+                contextLine(example.text, card: card)
+                    .font(.callout)
                     .multilineTextAlignment(.center)
-                if let example = card.examples.first, !example.translation.isEmpty {
-                    Text(example.translation)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 8)
-                }
-            } else {
-                if let example = card.examples.first {
-                    contextLine(example.text, card: card)
-                        .font(.callout)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(3)
-                }
-                Text(card.headword)
-                    .font(.system(size: 40, weight: .semibold))
-                    .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.5)
-                    .padding(.top, 4)
-                if !card.transcription.isEmpty {
-                    Text(card.transcription).font(.title3).foregroundStyle(.secondary)
+                    .lineLimit(3)
+            }
+            Text(card.headword)
+                .font(.system(size: 38, weight: .semibold))
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.5)
+            if !card.transcription.isEmpty {
+                Text(card.transcription).font(.title3).foregroundStyle(.secondary)
+            }
+
+            // The answer fades in below the word instead of flipping the card over.
+            Group {
+                if revealed {
+                    VStack(spacing: 6) {
+                        Divider().padding(.vertical, 4)
+                        Text(card.translations.joined(separator: ", "))
+                            .font(.title2.weight(.medium))
+                            .multilineTextAlignment(.center)
+                        if let example = card.examples.first, !example.translation.isEmpty {
+                            Text(example.translation)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                } else {
+                    Color.clear.frame(height: 60)
                 }
             }
 
@@ -144,40 +130,21 @@ struct StudyView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .aspectRatio(0.9, contentMode: .fit)
-        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 28))
-        .shadow(color: .black.opacity(0.18), radius: 20, y: 10)
-        .rotation3DEffect(.degrees(flipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
-        .rotation3DEffect(.degrees(flipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
+        .frame(minHeight: 420)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
     }
 
-    /// The example sentence with the card's word highlighted the way it is in translations.
+    /// The example sentence with the card's word marked the way it is in translations.
     private func contextLine(_ sentence: String, card: FlashCard) -> Text {
         let forms = card.allForms
         var result = Text("")
         for (i, token) in sentence.split(separator: " ", omittingEmptySubsequences: false).enumerated() {
             let word = token.trimmingCharacters(in: .punctuationCharacters).lowercased()
             var piece = Text(String(token))
-            if forms.contains(word) {
-                piece = piece.foregroundColor(.orange).bold()
-            } else {
-                piece = piece.foregroundColor(.secondary)
-            }
+            piece = forms.contains(word) ? piece.foregroundColor(.orange).bold() : piece.foregroundColor(.secondary)
             result = result + (i == 0 ? piece : Text(" ") + piece)
         }
         return result
-    }
-
-    /// Progress toward graduation: one dot per consecutive "remember".
-    private func streakDots(_ card: FlashCard) -> some View {
-        HStack(spacing: 4) {
-            ForEach(0..<FlashCard.graduationStreak, id: \.self) { i in
-                Circle()
-                    .fill(i < card.knowStreak ? Color.green : Color.secondary.opacity(0.25))
-                    .frame(width: 6, height: 6)
-            }
-        }
-        .padding(.leading, 6)
     }
 
     @ViewBuilder
@@ -193,16 +160,17 @@ struct StudyView: View {
         }
     }
 
-    private func verdictButton(_ title: LocalizedStringKey, systemImage: String, tint: Color,
+    private func verdictButton(_ title: LocalizedStringKey, systemImage: String, prominent: Bool,
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(.headline)
-                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                .padding(.vertical, 6)
         }
-        .background(tint.opacity(0.85), in: Capsule())
+        .buttonStyle(.bordered)
+        .tint(prominent ? .accentColor : .secondary)
+        .controlSize(.large)
     }
 
     private func dragGesture(_ card: FlashCard) -> some Gesture {
@@ -220,14 +188,13 @@ struct StudyView: View {
     private func commit(_ card: FlashCard, known: Bool) {
         offset = CGSize(width: known ? 600 : -600, height: 0)
         let graduated = store.record(card, known: known)
-        if known { remembered += 1 } else { forgot += 1 }
+        reviewed += 1
         Task {
             try? await Task.sleep(for: .milliseconds(250))
-            flipped = false
+            revealed = false
             offset = .zero
             recent = Array((recent + [card.id]).suffix(2))
-            self.card = upcoming ?? store.nextToStudy(excluding: recent)
-            upcoming = store.nextToStudy(excluding: recent + [self.card?.id].compactMap { $0 })
+            self.card = store.nextToStudy(excluding: recent)
             if graduated {
                 withAnimation { graduatedWord = card.headword }
                 try? await Task.sleep(for: .seconds(2))
@@ -237,10 +204,8 @@ struct StudyView: View {
     }
 
     private func speak(_ card: FlashCard) {
-        // Playback category so the word is audible with the silent switch on and after dictation used the mic.
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: .duckOthers)
         try? AVAudioSession.sharedInstance().setActive(true)
-
         let utterance = AVSpeechUtterance(string: card.headword)
         utterance.voice = Self.voice(for: card.language)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9

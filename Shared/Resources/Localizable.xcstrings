@@ -1022,16 +1022,6 @@
         }
       }
     },
-    "Words you forget will come up more often.": {
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Слова, которые забываешь, будут попадаться чаще."
-          }
-        }
-      }
-    },
     "Forgot": {
       "localizations": {
         "ru": {
@@ -1072,22 +1062,52 @@
         }
       }
     },
-    "%lld · %lld · %lld left": {
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld · %lld · осталось %lld"
-          }
-        }
-      }
-    },
     "“%@” is learned": {
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "«%@» выучено"
+          }
+        }
+      }
+    },
+    "%lld words to learn": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Слов на изучении: %lld"
+          }
+        }
+      }
+    },
+    "%lld reviewed · %lld to learn": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Просмотрено: %lld · учить: %lld"
+          }
+        }
+      }
+    },
+    "Tap the card to see the translation.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажми на карточку, чтобы увидеть перевод."
+          }
+        }
+      }
+    },
+    "Swipe right if you remembered it, left if not.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Свайп вправо — помню, влево — забыл."
           }
         }
       }
