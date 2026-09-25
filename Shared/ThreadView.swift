@@ -54,7 +54,7 @@ struct ThreadView: View {
                 if message.id != visible.first?.id { Divider() }
                 HStack(alignment: .top) {
                     selectable(message.text, style: .callout, color: .secondaryLabel)
-                    if isShortWord(message.text) {
+                    if FlashCard.isCardable(message.text) {
                         addCardButton(for: message)
                     }
                 }
@@ -91,11 +91,6 @@ struct ThreadView: View {
                 }
             }
         }
-    }
-
-    private func isShortWord(_ text: String) -> Bool {
-        let words = text.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
-        return !words.isEmpty && words.count <= 2
     }
 
     /// One tap to make a card for a word that was translated on its own; the reply is the card's context.

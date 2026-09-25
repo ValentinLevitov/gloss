@@ -96,7 +96,7 @@ struct SelectableText: UIViewRepresentable {
                 self?.parent.onDiscuss(selected)
             }
             var actions: [UIMenuElement] = [explain, discuss]
-            if let onAddCard = parent.onAddCard, selected.split(separator: " ").count <= 3 {
+            if let onAddCard = parent.onAddCard, FlashCard.isCardable(selected) {
                 let title = CardStore.shared.card(for: selected) == nil ? "Add to cards" : "Update card"
                 actions.append(UIAction(title: String(localized: String.LocalizationValue(title)),
                                         image: UIImage(systemName: "rectangle.stack.badge.plus")) { _ in

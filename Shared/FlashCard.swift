@@ -38,6 +38,14 @@ struct FlashCard: Identifiable, Codable, Hashable {
     /// How many "remember" swipes in a row graduate a card.
     static let graduationStreak = 4
 
+    /// Longest selection that still makes sense as one card: a word, a phrase or an idiom.
+    static let maxWords = 8
+
+    static func isCardable(_ text: String) -> Bool {
+        let words = text.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
+        return !words.isEmpty && words.count <= maxWords
+    }
+
     /// Cards remembered often come up less often.
     var studyWeight: Double { 1.0 / Double(1 + knowStreak) }
 

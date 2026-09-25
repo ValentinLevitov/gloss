@@ -24,7 +24,7 @@ struct QuickTranslationView: View {
                            onAddCard: { session.addCard(word: $0, context: session.messages.last?.text ?? sourceText) },
                            cardsVersion: CardStore.shared.version)
                 .frame(maxHeight: 64)
-            if isShortSelection {
+            if FlashCard.isCardable(sourceText) {
                 AddCardButton(word: sourceText, session: session) {
                     session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
                 }
@@ -35,11 +35,6 @@ struct QuickTranslationView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
         .overlay(alignment: .bottom) { Divider() }
-    }
-
-    private var isShortSelection: Bool {
-        let words = sourceText.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
-        return !words.isEmpty && words.count <= 2
     }
 
     private var lastTranslation: String? {
