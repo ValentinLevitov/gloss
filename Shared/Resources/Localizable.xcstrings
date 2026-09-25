@@ -1141,6 +1141,16 @@
           }
         }
       }
+    },
+    "Translate with camera": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевести с камеры"
+          }
+        }
+      }
     }
   }
 }

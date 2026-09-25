@@ -32,6 +32,9 @@ targets:
         CFBundleLocalizations: [en, ru]
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: Take a photo of text to translate it.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.vlevitov.translator
+            CFBundleURLSchemes: [gloss]
         NSMicrophoneUsageDescription: Dictate text to translate or a question.
         NSSpeechRecognitionUsageDescription: Speech is recognized on the device to turn your dictation into text.
         UILaunchScreen: {}
@@ -50,6 +53,7 @@ targets:
     dependencies:
       - target: TranslationExtension
       - target: ShareExtension
+      - target: Widgets
   TranslationExtension:
     type: extensionkit-extension
     platform: iOS
@@ -93,6 +97,25 @@ targets:
               NSExtensionActivationSupportsWebURLWithMaxCount: 1
     entitlements:
       path: ShareExtension/ShareExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.vlevitov.translator
+  Widgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vlevitov.translator.widgets
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Gloss
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widgets/Widgets.entitlements
       properties:
         com.apple.security.application-groups:
           - group.com.vlevitov.translator

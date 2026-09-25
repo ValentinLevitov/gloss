@@ -104,8 +104,10 @@ struct ContentView: View {
                 CardStore.shared.reload()
                 QuickActions.shared.refresh()
                 openStudyIfRequested()
+                openCameraIfRequested()
             }
             .onChange(of: QuickActions.shared.pendingStudy) { _, _ in openStudyIfRequested() }
+            .onChange(of: QuickActions.shared.pendingCamera) { _, _ in openCameraIfRequested() }
         }
         .modifier(DictationBridge(recorder: recorder, session: session, focused: $composerFocused))
     }
@@ -144,6 +146,19 @@ struct ContentView: View {
         showCards = false
         showHistory = false
         showStudy = true
+    }
+
+    /// Quick action / widget "Translate with camera".
+    private func openCameraIfRequested() {
+        guard QuickActions.shared.pendingCamera, CameraPicker.isAvailable else { return }
+        QuickActions.shared.pendingCamera = false
+        showSettings = false
+        showCards = false
+        showHistory = false
+        showStudy = false
+        showOnboarding = false
+        composerFocused = false
+        showCamera = true
     }
 
     private func translate(_ image: UIImage) {
