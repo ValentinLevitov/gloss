@@ -48,7 +48,12 @@ struct ThreadView: View {
         case (.user, .translation):
             VStack(alignment: .leading, spacing: 10) {
                 if message.id != visible.first?.id { Divider() }
-                selectable(message.text, style: .callout, color: .secondaryLabel)
+                HStack(alignment: .top) {
+                    selectable(message.text, style: .callout, color: .secondaryLabel)
+                    if isShortWord(message.text) {
+                        addCardButton(for: message)
+                    }
+                }
             }
         case (.user, .question):
             VStack(alignment: .leading, spacing: 6) {
@@ -82,6 +87,28 @@ struct ThreadView: View {
                 }
             }
         }
+    }
+
+    private func isShortWord(_ text: String) -> Bool {
+        let words = text.split(whereSeparator: { $0.isWhitespace || $0.isNewline })
+        return !words.isEmpty && words.count <= 2
+    }
+
+    /// One tap to make a card for a word that was translated on its own; the reply is the card's context.
+    private func addCardButton(for message: ThreadMessage) -> some View {
+        let existing = CardStore.shared.card(for: message.text)
+        let reply = session.messages.first { $0.role == .assistant && $0.date >= message.date }?.text ?? message.text
+        return Button {
+            session.addCard(word: message.text, context: reply)
+        } label: {
+            Label(existing == nil ? "Add to cards" : "Update card",
+                  systemImage: existing == nil ? "rectangle.stack.badge.plus" : "rectangle.stack")
+                .labelStyle(.iconOnly)
+                .font(.title3)
+        }
+        .buttonStyle(.borderless)
+        .disabled(session.buildingCardFor != nil || session.isLoading)
+        .accessibilityLabel(existing == nil ? "Add to cards" : "Update card")
     }
 
     private func selectable(_ markdown: String, style: UIFont.TextStyle, color: UIColor) -> some View {
