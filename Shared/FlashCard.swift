@@ -105,8 +105,12 @@ final class CardStore {
     /// Bumped on every change so text views know to re-highlight.
     private(set) var version = 0
 
-    /// form (lowercased) → card
+    /// form (lowercased) → card, all cards
     private(set) var index: [String: FlashCard] = [:]
+    /// Single-word forms only (background highlight).
+    private(set) var wordIndex: [String: FlashCard] = [:]
+    /// Multi-word forms only (underline, matched whole).
+    private(set) var phraseIndex: [String: FlashCard] = [:]
 
     private let fileURL: URL
 
@@ -203,11 +207,16 @@ final class CardStore {
     }
 
     private func rebuildIndex() {
-        var map: [String: FlashCard] = [:]
+        var map: [String: FlashCard] = [:], words: [String: FlashCard] = [:], phrases: [String: FlashCard] = [:]
         for card in cards.reversed() {
-            for form in card.allForms where !form.isEmpty { map[form] = card }
+            for form in card.allForms where !form.isEmpty {
+                map[form] = card
+                if form.contains(" ") { phrases[form] = card } else { words[form] = card }
+            }
         }
         index = map
+        wordIndex = words
+        phraseIndex = phrases
         version += 1
     }
 }

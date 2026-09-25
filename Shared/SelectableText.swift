@@ -62,18 +62,33 @@ struct SelectableText: UIViewRepresentable {
         return result
     }
 
-    /// Marks words that have flashcards: orange while learning, green once learned.
+    /// Marks text that has flashcards: single words get a tinted background, phrases a tinted underline
+    /// (orange while learning, green once learned). Phrases are matched whole, so their words are not marked alone.
     private static func highlightCards(in text: NSMutableAttributedString) {
-        let index = CardStore.shared.index
-        guard !index.isEmpty else { return }
+        let store = CardStore.shared
+        guard !store.index.isEmpty else { return }
         let string = text.string as NSString
-        let words = try! NSRegularExpression(pattern: "\\p{L}[\\p{L}'’\\-]*")
-        for match in words.matches(in: text.string, range: NSRange(location: 0, length: string.length)) {
-            let word = string.substring(with: match.range).lowercased()
-            guard let card = index[word] else { continue }
-            let tint: UIColor = card.isLearned ? .systemGreen : .systemOrange
-            text.addAttributes([.backgroundColor: tint.withAlphaComponent(0.22)], range: match.range)
+        let full = NSRange(location: 0, length: string.length)
+
+        for (phrase, card) in store.phraseIndex {
+            let pattern = "(?<!\\p{L})" + NSRegularExpression.escapedPattern(for: phrase).replacingOccurrences(of: " ", with: "\\s+") + "(?!\\p{L})"
+            guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { continue }
+            for match in regex.matches(in: text.string, range: full) {
+                text.addAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue,
+                                    .underlineColor: tint(for: card)], range: match.range)
+            }
         }
+
+        let words = try! NSRegularExpression(pattern: "\\p{L}[\\p{L}'’\\-]*")
+        for match in words.matches(in: text.string, range: full) {
+            let word = string.substring(with: match.range).lowercased()
+            guard let card = store.wordIndex[word] else { continue }
+            text.addAttributes([.backgroundColor: tint(for: card).withAlphaComponent(0.22)], range: match.range)
+        }
+    }
+
+    private static func tint(for card: FlashCard) -> UIColor {
+        card.isLearned ? .systemGreen : .systemOrange
     }
 
     final class Coordinator: NSObject, UITextViewDelegate {
