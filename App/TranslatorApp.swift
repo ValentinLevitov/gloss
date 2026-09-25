@@ -2,6 +2,8 @@ import SwiftUI
 
 @main
 struct TranslatorApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     init() {
         #if targetEnvironment(simulator)
         // Test hook: wipe keys and onboarding state so a UI test starts from a fresh install.

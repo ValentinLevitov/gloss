@@ -1,15 +1,17 @@
 import XCTest
 
-/// Opens study mode from the main-screen banner so screenshots can be taken from outside.
+/// Long-presses the app icon on the home screen to show the quick action.
 final class CardsScreens: XCTestCase {
-    func testStudyFromBanner() {
-        let app = XCUIApplication()
-        app.launchEnvironment["GLOSS_SEED_ANTHROPIC_KEY"] = "placeholder"
-        app.launch()
-        sleep(5)
-        app.buttons.matching(NSPredicate(format: "label CONTAINS 'words to learn'")).firstMatch.tap()
-        sleep(5)
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+    func testQuickAction() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        XCUIDevice.shared.press(.home)
+        sleep(2)
+        let icon = springboard.icons["Gloss"].firstMatch
+        XCTAssertTrue(icon.waitForExistence(timeout: 5))
+        icon.press(forDuration: 1.5)
+        sleep(4)
+        let item = springboard.buttons["Study words"].firstMatch
+        if item.waitForExistence(timeout: 3) { item.tap() }
         sleep(5)
     }
 }

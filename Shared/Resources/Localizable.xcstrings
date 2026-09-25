@@ -1111,6 +1111,16 @@
           }
         }
       }
+    },
+    "Study words": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учить слова"
+          }
+        }
+      }
     }
   }
 }

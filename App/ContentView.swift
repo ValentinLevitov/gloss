@@ -102,7 +102,10 @@ struct ContentView: View {
                 // The thread and the cards may have changed in the system translation sheet while the app was in the background.
                 session.reload()
                 CardStore.shared.reload()
+                QuickActions.shared.refresh()
+                openStudyIfRequested()
             }
+            .onChange(of: QuickActions.shared.pendingStudy) { _, _ in openStudyIfRequested() }
         }
         .modifier(DictationBridge(recorder: recorder, session: session, focused: $composerFocused))
     }
@@ -131,6 +134,16 @@ struct ContentView: View {
                 stop: { recorder.stop() }
             )
         )
+    }
+
+    /// Home-screen quick action "Study words".
+    private func openStudyIfRequested() {
+        guard QuickActions.shared.pendingStudy else { return }
+        QuickActions.shared.pendingStudy = false
+        showSettings = false
+        showCards = false
+        showHistory = false
+        showStudy = true
     }
 
     private func translate(_ image: UIImage) {
