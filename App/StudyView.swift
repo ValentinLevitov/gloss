@@ -89,7 +89,7 @@ struct StudyView: View {
             Spacer()
 
             if let example = card.examples.first {
-                contextLine(example.text, card: card)
+                contextLine(Self.window(example.text, around: card.allForms), card: card)
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -132,6 +132,20 @@ struct StudyView: View {
         .frame(maxWidth: .infinity)
         .frame(minHeight: 420)
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
+    }
+
+    /// Keeps the sentence readable on the card: at most `limit` words, centred on the first form of the word.
+    static func window(_ sentence: String, around forms: Set<String>, limit: Int = 14) -> String {
+        let words = sentence.split(separator: " ").map(String.init)
+        guard words.count > limit else { return sentence }
+        let hit = words.firstIndex { forms.contains($0.trimmingCharacters(in: .punctuationCharacters).lowercased()) } ?? 0
+        var start = max(0, hit - limit / 2)
+        let end = min(words.count, start + limit)
+        start = max(0, end - limit)
+        var slice = words[start..<end].joined(separator: " ")
+        if start > 0 { slice = "…" + slice }
+        if end < words.count { slice += "…" }
+        return slice
     }
 
     /// The example sentence with the card's word marked the way it is in translations.

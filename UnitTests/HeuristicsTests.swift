@@ -20,6 +20,16 @@ final class HeuristicsTests: XCTestCase {
         XCTAssertEqual(Prompt.targetLanguage(for: "Однажды в студёную зимнюю пору я из лесу вышел", pair: pair)?.code, "en")
     }
 
+    @MainActor
+    func testStudyContextWindowKeepsTheWordVisible() {
+        let sentence = (1...20).map { "w\($0)" }.joined(separator: " ") + " bulk end."
+        let shown = StudyView.window(sentence, around: ["bulk"], limit: 8)
+        XCTAssertTrue(shown.contains("bulk"))
+        XCTAssertTrue(shown.hasPrefix("…"))
+        XCTAssertLessThanOrEqual(shown.split(separator: " ").count, 8)
+        XCTAssertEqual(StudyView.window("short one", around: ["one"]), "short one")
+    }
+
     func testTextSizeMapping() {
         XCTAssertNil(TextSize.system.dynamicTypeSize)
         XCTAssertEqual(TextSize.xxLarge.dynamicTypeSize, .accessibility2)

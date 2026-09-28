@@ -1,4 +1,5 @@
 import Foundation
+import NaturalLanguage
 
 /// Asks the model for a dictionary card and parses its JSON reply.
 enum CardBuilder {
@@ -25,7 +26,7 @@ enum CardBuilder {
         - "transcription" is IPA of the headword; empty string if not applicable.
         - "forms": for verbs give all principal forms (e.g. base, 3rd person, past, past participle, present participle, or the equivalents in the word's language); \
         for nouns the plural; for adjectives comparative/superlative when irregular. Each item has a short "label" and the "value". Empty array if nothing useful.
-        - "examples": 2 short sentences using the headword, each with a translation. Reuse the context if it is a good example.
+        - "examples": 2 short sentences in the word's own language that use the headword, each with its translation into the other language. "text" is always in the word's language, never the translation. Reuse the context if it is a good example.
         - "note": one line on nuance (register, false friend, idiom) or empty string.
         - "level": CEFR level at which learners typically meet this word: A1, A2, B1, B2, C1 or C2.
 
@@ -40,6 +41,12 @@ enum CardBuilder {
         return try parse(reply, sourceWord: word)
     }
 
+    private static func detect(_ text: String) -> String? {
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(text)
+        return recognizer.dominantLanguage?.rawValue.split(separator: "-").first.map(String.init)
+    }
+
     static func parse(_ reply: String, sourceWord: String) throws -> FlashCard {
         guard let start = reply.firstIndex(of: "{"), let end = reply.lastIndex(of: "}") else { throw BuildError.badReply }
         let json = Data(reply[start...end].utf8)
@@ -50,9 +57,15 @@ enum CardBuilder {
             guard let label = item["label"] as? String, let value = item["value"] as? String, !value.isEmpty else { return nil }
             return FlashCard.Form(label: label, value: value)
         }
+        let language = (object["language"] as? String ?? "").lowercased()
         let examples = (object["examples"] as? [[String: Any]] ?? []).compactMap { item -> FlashCard.Example? in
             guard let text = item["text"] as? String, !text.isEmpty else { return nil }
-            return FlashCard.Example(text: text, translation: item["translation"] as? String ?? "")
+            let translation = item["translation"] as? String ?? ""
+            // The model occasionally swaps the sides; put the sentence in the word's language first.
+            if !language.isEmpty, detect(text) != language, detect(translation) == language {
+                return FlashCard.Example(text: translation, translation: text)
+            }
+            return FlashCard.Example(text: text, translation: translation)
         }
         var card = FlashCard(
             headword: headword,

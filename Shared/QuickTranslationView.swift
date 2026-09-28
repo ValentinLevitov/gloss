@@ -15,6 +15,11 @@ struct QuickTranslationView: View {
     @State private var waitedTooLong = false
     @FocusState private var composerFocused: Bool
 
+    /// A word or a short phrase is pinned above the translation; a long passage stays in the feed.
+    private var pinsSource: Bool {
+        FlashCard.isCardable(sourceText) || sourceText.count <= 80
+    }
+
     /// The selected text stays visible while the translation scrolls underneath.
     private var sourceHeader: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -53,7 +58,7 @@ struct QuickTranslationView: View {
                     }
                 }
 
-                ThreadView(session: session, fromIndex: firstIndex, hidesFirstSource: true) { composerFocused = true }
+                ThreadView(session: session, fromIndex: firstIndex, hidesFirstSource: pinsSource) { composerFocused = true }
 
                 if let onReplace, !session.isLoading, let translation = lastTranslation {
                     Button {
@@ -73,7 +78,7 @@ struct QuickTranslationView: View {
         .scrollDismissesKeyboard(.interactively)
         .scrollContentBackground(.hidden)
         .safeAreaInset(edge: .top, spacing: 0) {
-            if started { sourceHeader }
+            if started, pinsSource { sourceHeader }
         }
         .safeAreaInset(edge: .bottom) {
             ComposerView(session: session, allowsTranslate: false, focused: $composerFocused, glass: true)

@@ -33,6 +33,13 @@ final class CardTests: XCTestCase {
         XCTAssertTrue(card.allForms.contains("coin"))
     }
 
+    func testParseSwapsExampleSidesWhenTheModelMixesThemUp() throws {
+        let reply = #"{"headword":"punch","language":"en","partOfSpeech":"noun","transcription":"","translations":["удар"],"forms":[],"examples":[{"text":"Как человек блокирует удар.","translation":"Like a man blocking a punch."}],"note":"","level":"A2"}"#
+        let card = try CardBuilder.parse(reply, sourceWord: "punch")
+        XCTAssertEqual(card.examples.first?.text, "Like a man blocking a punch.")
+        XCTAssertEqual(card.examples.first?.translation, "Как человек блокирует удар.")
+    }
+
     func testParseRejectsGarbage() {
         XCTAssertThrowsError(try CardBuilder.parse("Sorry, I cannot help.", sourceWord: "x"))
         XCTAssertThrowsError(try CardBuilder.parse(#"{"headword":""}"#, sourceWord: "x"))
