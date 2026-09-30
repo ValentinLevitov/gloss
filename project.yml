@@ -2,7 +2,7 @@ name: Translator
 options:
   bundleIdPrefix: com.vlevitov
   developmentLanguage: en
-  knownRegions: [en, ru]
+  knownRegions: [en, ru, de, fr, es, it, pt-BR, uk, pl, tr, ja, ko, zh-Hans]
   deploymentTarget:
     iOS: "18.4"
   createIntermediateGroups: true
@@ -29,7 +29,7 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Gloss
-        CFBundleLocalizations: [en, ru]
+        CFBundleLocalizations: [en, ru, de, fr, es, it, pt-BR, uk, pl, tr, ja, ko, zh-Hans]
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: Take a photo of text to translate it.
         CFBundleURLTypes:

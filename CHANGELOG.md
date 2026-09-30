@@ -13,6 +13,7 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 - Text size setting (System … Huge), applied in the app and in the system sheet.
 - Home-screen quick actions: "Translate with camera" and "Study words" (with the count).
 - `gloss://camera` and `gloss://study` URL scheme; lock-screen and home-screen widgets for both.
+- UI localized into German, French, Spanish, Italian, Brazilian Portuguese, Ukrainian, Polish, Turkish, Japanese, Korean and Simplified Chinese (in addition to English and Russian).
 - Setup: the API key is verified as it is typed or pasted, with a visible status and Retry; Next unlocks once a key is saved.
 - Unit tests (conversation budget, model catalog parsing, card parsing and scheduling, heuristics, provider SSE parsers via a URLProtocol stub, phrase matching), a fresh-install smoke test and a setup-flow UI test; GitHub Actions CI on every push.
 
