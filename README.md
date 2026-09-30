@@ -9,6 +9,8 @@ Gloss is an iOS translator that becomes the system translation app: select text 
 - **Bring your own key.** Anthropic, OpenAI, Google Gemini, DeepSeek or xAI. Model lists are fetched live. Keys stay in the device Keychain; text goes straight to the provider. No backend, no analytics.
 - **Photo translation** (on-device OCR), dictation, editable prompt, any language pair.
 
+See [CHANGELOG.md](CHANGELOG.md) for what changed in each version.
+
 ## Building
 
 Requires Xcode 27, iOS 18.4+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen):
