@@ -21,14 +21,14 @@ struct QuickTranslationView: View {
     }
 
     /// The selected text stays visible while the translation scrolls underneath.
+    /// Plain `Text` here: a UIViewRepresentable inside a safe-area inset fought the sheet's layout.
     private var sourceHeader: some View {
         HStack(alignment: .top, spacing: 10) {
-            SelectableText(markdown: sourceText, textStyle: .callout, color: .secondaryLabel,
-                           onExplain: { session.ask("", quote: $0) },
-                           onDiscuss: { session.quote = $0; composerFocused = true },
-                           onAddCard: { session.addCard(word: $0, context: session.messages.last?.text ?? sourceText) },
-                           cardsVersion: CardStore.shared.version)
-                .frame(maxHeight: 64)
+            Text(sourceText)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .lineLimit(3)
+                .frame(maxWidth: .infinity, alignment: .leading)
             if FlashCard.isCardable(sourceText) {
                 AddCardButton(word: sourceText, session: session) {
                     session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
@@ -37,7 +37,6 @@ struct QuickTranslationView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
-        .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
         .overlay(alignment: .bottom) { Divider() }
     }
