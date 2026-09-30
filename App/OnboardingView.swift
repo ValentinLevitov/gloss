@@ -49,14 +49,15 @@ struct OnboardingView: View {
                     ForEach(ProviderKind.allCases) { Text($0.title).tag($0) }
                 }
                 APIKeyField(provider: provider) { ok in
-                    hasKey = ok || ProviderKind.allCases.contains { $0.hasKey }
+                    // A saved key is enough to move on; a failed check can be fixed later in Settings.
+                    hasKey = ProviderKind.allCases.contains { $0.hasKey }
                     if ok, let first = ModelCatalog.models(for: provider).first { ConversationSession.select(first) }
                 }
                 .id(provider)
             } header: {
                 Text("1 · API key")
             } footer: {
-                Text("Anthropic (Claude) is the default. More providers can be added later in Settings → Model.")
+                Text(hasKey ? "Tap Next to continue." : "Paste a key; it is checked automatically. Next unlocks once a key is saved.")
             }
         }
     }

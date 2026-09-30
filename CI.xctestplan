@@ -3,7 +3,7 @@
   "defaultOptions" : { "codeCoverage" : true },
   "testTargets" : [
     { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UnitTests", "name" : "UnitTests" } },
-    { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UITests", "name" : "UITests" }, "selectedTests" : [ "SmokeTests/testFreshInstallShowsSetup()" ] }
+    { "target" : { "containerPath" : "container:Translator.xcodeproj", "identifier" : "UITests", "name" : "UITests" }, "selectedTests" : [ "SmokeTests/testFreshInstallShowsSetup()", "SetupFlowTests/testSetupNextUnlocksAfterPaste()" ] }
   ],
   "version" : 1
 }

@@ -542,16 +542,6 @@
         }
       }
     },
-    "Anthropic (Claude) is the default. More providers can be added later in Settings → Model.": {
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "По умолчанию Anthropic (Claude). Остальных провайдеров можно добавить позже в Настройки → Модель."
-          }
-        }
-      }
-    },
     "Open Default Apps settings": {
       "localizations": {
         "ru": {
@@ -1148,6 +1138,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Перевести с камеры"
+          }
+        }
+      }
+    },
+    "Retry": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторить"
+          }
+        }
+      }
+    },
+    "Checking the key…": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверяю ключ…"
+          }
+        }
+      }
+    },
+    "Verify key": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверить ключ"
+          }
+        }
+      }
+    },
+    "Tap Next to continue.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажми «Далее», чтобы продолжить."
+          }
+        }
+      }
+    },
+    "Paste a key; it is checked automatically. Next unlocks once a key is saved.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вставь ключ — он проверится сам. «Далее» станет активна, когда ключ сохранён."
           }
         }
       }

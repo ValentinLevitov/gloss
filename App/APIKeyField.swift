@@ -11,6 +11,7 @@ struct APIKeyField: View {
 
     @State private var key: String
     @State private var status: Status
+    @State private var verifyTask: Task<Void, Never>?
     @FocusState private var focused: Bool
 
     init(provider: ProviderKind, onChange: @escaping (_ hasKey: Bool) -> Void = { _ in }) {
@@ -33,6 +34,17 @@ struct APIKeyField: View {
                 .onSubmit { Task { await verify() } }
                 .onChange(of: focused) { _, isFocused in
                     if !isFocused, trimmed != KeychainStore.apiKey(for: provider) ?? "" { Task { await verify() } }
+                }
+                // Verify as the user types or pastes, without waiting for Return or focus to move.
+                .onChange(of: key) { _, _ in
+                    verifyTask?.cancel()
+                    guard trimmed != KeychainStore.apiKey(for: provider) ?? "" || status == .none else { return }
+                    status = trimmed.isEmpty ? .none : status
+                    verifyTask = Task {
+                        try? await Task.sleep(for: .milliseconds(600))
+                        guard !Task.isCancelled else { return }
+                        await verify()
+                    }
                 }
 
             switch status {
@@ -65,10 +77,21 @@ struct APIKeyField: View {
                 .font(.footnote)
         }
 
-        if case .failed(let message) = status {
-            Text(message).font(.footnote).foregroundStyle(.red)
-        } else if case .ok(let count) = status {
+        switch status {
+        case .failed(let message):
+            HStack {
+                Text(message).font(.footnote).foregroundStyle(.red)
+                Spacer()
+                Button("Retry") { Task { await verify() } }.font(.footnote)
+            }
+        case .ok(let count):
             Text("Key works · \(count) models available").font(.footnote).foregroundStyle(.secondary)
+        case .checking:
+            Text("Checking the key…").font(.footnote).foregroundStyle(.secondary)
+        case .none:
+            if !trimmed.isEmpty {
+                Button("Verify key") { Task { await verify() } }.font(.footnote)
+            }
         }
     }
 
