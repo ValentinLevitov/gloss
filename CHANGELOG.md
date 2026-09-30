@@ -25,6 +25,7 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 - Prompt template and helper strings are in English; the answer language comes from the language settings.
 
 ### Fixed
+- Settings (model, languages) were only saved by the Done button; dismissing the sheet by swipe discarded them. They now apply as soon as they change.
 - System sheet rendered empty after the pinned header was added (a UIViewRepresentable inside the top safe-area inset); the header now uses plain Text.
 - Discuss: sending with a fragment attached translated the draft instead of asking about the fragment, and left the fragment in place.
 - Dictation dropped everything before a pause; segments are now accumulated and silent restarts detected.

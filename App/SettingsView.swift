@@ -79,15 +79,14 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showOnboarding) { OnboardingView() }
+            // Settings apply as they change; dismissing the sheet any way keeps them.
+            .onChange(of: model) { _, model in ConversationSession.select(model) }
+            .onChange(of: languages) { _, languages in languages.save() }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        ConversationSession.select(model)
-                        languages.save()
-                        dismiss()
-                    }
+                    Button("Done") { dismiss() }
                 }
             }
         }
