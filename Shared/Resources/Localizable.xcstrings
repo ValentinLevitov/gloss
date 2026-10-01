@@ -9045,6 +9045,16 @@
           }
         }
       }
+    },
+    "Copy": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скопировать"
+          }
+        }
+      }
     }
   }
 }
