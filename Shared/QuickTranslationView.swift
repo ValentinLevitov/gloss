@@ -13,6 +13,7 @@ struct QuickTranslationView: View {
     @State private var firstIndex = 0
     @State private var started = false
     @State private var waitedTooLong = false
+    @State private var headerHeight: CGFloat = 0
     @FocusState private var composerFocused: Bool
 
     /// A word or a short phrase is pinned above the translation; a long passage stays in the feed.
@@ -20,15 +21,15 @@ struct QuickTranslationView: View {
         FlashCard.isCardable(sourceText) || sourceText.count <= 80
     }
 
-    /// The selected text stays visible while the translation scrolls underneath.
-    /// Plain `Text` here: a UIViewRepresentable inside a safe-area inset fought the sheet's layout.
+    /// The selected text stays visible while the translation scrolls underneath. Selectable, so Explain /
+    /// Discuss / Add to cards work on a word inside it; its height is measured and used as top padding for the feed.
     private var sourceHeader: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(sourceText)
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .lineLimit(3)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            SelectableText(markdown: sourceText, textStyle: .callout, color: .secondaryLabel,
+                           onExplain: { session.ask("", quote: $0) },
+                           onDiscuss: { session.quote = $0; composerFocused = true },
+                           onAddCard: { session.addCard(word: $0, context: session.messages.last?.text ?? sourceText) },
+                           cardsVersion: CardStore.shared.version)
             if FlashCard.isCardable(sourceText) {
                 AddCardButton(word: sourceText, session: session) {
                     session.addCard(word: sourceText, context: session.messages.last?.text ?? sourceText)
@@ -37,8 +38,10 @@ struct QuickTranslationView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
         .overlay(alignment: .bottom) { Divider() }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { headerHeight = $0 }
     }
 
     private var lastTranslation: String? {
@@ -76,7 +79,9 @@ struct QuickTranslationView: View {
         .defaultScrollAnchor(session.messages.count > firstIndex + 2 ? .bottom : .top, for: .sizeChanges)
         .scrollDismissesKeyboard(.interactively)
         .scrollContentBackground(.hidden)
-        .safeAreaInset(edge: .top, spacing: 0) {
+        .contentMargins(.top, started && pinsSource ? headerHeight : 0, for: .scrollContent)
+        // Overlay rather than a safe-area inset: a UIViewRepresentable inside the inset left the sheet empty.
+        .overlay(alignment: .top) {
             if started, pinsSource { sourceHeader }
         }
         .safeAreaInset(edge: .bottom) {

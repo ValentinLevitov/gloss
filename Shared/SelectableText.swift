@@ -110,6 +110,12 @@ struct SelectableText: UIViewRepresentable {
         card.isLearned ? .systemGreen : .systemOrange
     }
 
+    static func isCopy(_ element: UIMenuElement) -> Bool {
+        if let menu = element as? UIMenu { return menu.identifier == .standardEdit || menu.children.contains(where: isCopy) }
+        if let command = element as? UICommand { return command.action == #selector(UIResponderStandardEditActions.copy(_:)) }
+        return false
+    }
+
     final class Coordinator: NSObject, UITextViewDelegate {
         var parent: SelectableText
         var renderedKey: String?
@@ -138,7 +144,10 @@ struct SelectableText: UIViewRepresentable {
                     onAddCard(selected)
                 })
             }
-            return UIMenu(children: actions + suggestedActions)
+            // Keep only Copy from the system menu: Translate would open a second Gloss sheet, Look Up and
+            // Search Web duplicate Explain.
+            let copy = suggestedActions.filter { SelectableText.isCopy($0) }
+            return UIMenu(children: actions + copy)
         }
     }
 }
