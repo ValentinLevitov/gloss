@@ -75,8 +75,6 @@ struct QuickTranslationView: View {
             .padding()
         }
         .defaultScrollAnchor(.top, for: .alignment)
-        // The first translation should be read from its headword; only follow-up answers pull the view down.
-        .defaultScrollAnchor(session.messages.count > firstIndex + 2 ? .bottom : .top, for: .sizeChanges)
         .scrollDismissesKeyboard(.interactively)
         .scrollContentBackground(.hidden)
         .contentMargins(.top, started && pinsSource ? headerHeight : 0, for: .scrollContent)

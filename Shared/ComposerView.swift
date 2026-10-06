@@ -58,9 +58,7 @@ struct ComposerView: View {
                     .padding(.vertical, 8)
                     .modifier(FieldChrome())
                 } else {
-                    TextField(placeholder, text: $session.draft, axis: .vertical)
-                        .lineLimit(1...6)
-                        .focused(focused)
+                    DraftField(placeholder: placeholder, text: $session.draft, focused: focused)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .modifier(FieldChrome())
@@ -176,5 +174,21 @@ private struct BarChrome: ViewModifier {
         } else {
             content.background(.bar)
         }
+    }
+}
+
+/// The text field on its own, so the composer re-rendering on every keystroke does not rebuild it
+/// (a rebuilt field loses the keyboard's word context: backspace after swipe-typing deletes letters instead of the word).
+private struct DraftField: View, Equatable {
+    let placeholder: LocalizedStringKey
+    @Binding var text: String
+    var focused: FocusState<Bool>.Binding
+
+    static func == (a: DraftField, b: DraftField) -> Bool { a.text == b.text }
+
+    var body: some View {
+        TextField(placeholder, text: $text, axis: .vertical)
+            .lineLimit(1...6)
+            .focused(focused)
     }
 }

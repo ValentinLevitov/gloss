@@ -26,6 +26,8 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 - Prompt template and helper strings are in English; the answer language comes from the language settings.
 
 ### Fixed
+- The thread jumped when the keyboard was dismissed, so a long-press landed on the wrong text; the view now only follows a reply while it streams.
+- Backspace after swipe-typing deleted letter by letter instead of the whole word: the text field is no longer rebuilt on every keystroke.
 - Settings (model, languages) were only saved by the Done button; dismissing the sheet by swipe discarded them. They now apply as soon as they change.
 - System sheet rendered empty after the pinned header was added (a UIViewRepresentable inside the top safe-area inset); the header now uses plain Text.
 - Discuss: sending with a fragment attached translated the draft instead of asking about the fragment, and left the fragment in place.

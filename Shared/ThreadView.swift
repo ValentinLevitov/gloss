@@ -21,6 +21,7 @@ struct ThreadView: View {
         VStack(alignment: .leading, spacing: 14) {
             ForEach(visible) { message in
                 row(for: message)
+                    .id(message.id)
             }
 
             if let word = session.buildingCardFor {
@@ -44,6 +45,9 @@ struct ThreadView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        // Follow a streaming reply, but never move the content while the user is reading or selecting.
+        .scrollTargetLayout()
+        .modifier(FollowStreaming(session: session, fromIndex: fromIndex))
     }
 
     @ViewBuilder
@@ -144,5 +148,23 @@ struct AddCardButton: View {
         .controlSize(.small)
         .tint(.secondary)
         .disabled(session.buildingCardFor != nil || session.isLoading)
+    }
+}
+
+/// Scrolls to the reply being streamed as it grows; stops as soon as streaming ends.
+private struct FollowStreaming: ViewModifier {
+    let session: ConversationSession
+    let fromIndex: Int
+    @State private var scrollTarget: UUID?
+
+    func body(content: Content) -> some View {
+        content
+            .scrollPosition(id: $scrollTarget, anchor: .bottom)
+            .onChange(of: session.messages.last?.text.count) { _, _ in
+                // Only the first reply in a sheet reads from its top; everything else follows the tail.
+                guard session.isLoading, let last = session.messages.last, last.role == .assistant,
+                      session.messages.count > fromIndex + 2 else { return }
+                scrollTarget = last.id
+            }
     }
 }

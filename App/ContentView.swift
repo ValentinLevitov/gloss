@@ -25,7 +25,6 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
             }
             .defaultScrollAnchor(.top, for: .alignment)
-            .defaultScrollAnchor(.bottom, for: .sizeChanges)
             .scrollDismissesKeyboard(.interactively)
             .overlay {
                 if session.messages.isEmpty, session.errorMessage == nil {
