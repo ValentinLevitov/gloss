@@ -211,3 +211,27 @@ private struct DictationBridge: ViewModifier {
             }
     }
 }
+/// One-tap way into study mode, shown above the composer while there are cards to learn.
+private struct StudyBanner: View {
+    @Binding var isPresented: Bool
+    private var count: Int { CardStore.shared.unlearnedCount }
+
+    var body: some View {
+        if count > 0 {
+            Button { isPresented = true } label: {
+                HStack {
+                    Label("\(count) words to learn", systemImage: "rectangle.stack")
+                    Spacer()
+                    Text("Study").fontWeight(.semibold)
+                    Image(systemName: "chevron.right").font(.caption)
+                }
+                .font(.subheadline)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+            }
+            .tint(.primary)
+            .background(.bar)
+        }
+    }
+}
+
