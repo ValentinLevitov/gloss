@@ -180,49 +180,34 @@ struct ContentView: View {
     }
 }
 
-/// Pushes dictation results into the composer draft.
+/// Pushes dictation results into the composer draft, appending to whatever was typed before.
 private struct DictationBridge: ViewModifier {
     let recorder: SpeechRecorder
     let session: ConversationSession
     var focused: FocusState<Bool>.Binding
+    @State private var prefix = ""
+
+    private func joined(_ transcript: String) -> String {
+        if prefix.isEmpty { return transcript }
+        if transcript.isEmpty { return prefix }
+        return prefix + (prefix.hasSuffix(" ") || prefix.hasSuffix("\n") ? "" : " ") + transcript
+    }
 
     func body(content: Content) -> some View {
         content
-            .onChange(of: recorder.transcript) { _, text in
-                if recorder.isRecording { session.draft = text }
-            }
             .onChange(of: recorder.isRecording) { _, recording in
-                if !recording, !recorder.transcript.isEmpty {
-                    session.draft = recorder.transcript
+                if recording {
+                    prefix = session.draft
+                } else if !recorder.transcript.isEmpty {
+                    session.draft = joined(recorder.transcript)
                     focused.wrappedValue = true
                 }
+            }
+            .onChange(of: recorder.transcript) { _, text in
+                if recorder.isRecording { session.draft = joined(text) }
             }
             .onChange(of: recorder.errorMessage) { _, message in
                 if let message { session.errorMessage = message }
             }
-    }
-}
-
-/// One-tap way into study mode, shown above the composer while there are cards to learn.
-private struct StudyBanner: View {
-    @Binding var isPresented: Bool
-    private var count: Int { CardStore.shared.unlearnedCount }
-
-    var body: some View {
-        if count > 0 {
-            Button { isPresented = true } label: {
-                HStack {
-                    Label("\(count) words to learn", systemImage: "rectangle.stack")
-                    Spacer()
-                    Text("Study").fontWeight(.semibold)
-                    Image(systemName: "chevron.right").font(.caption)
-                }
-                .font(.subheadline)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-            }
-            .tint(.primary)
-            .background(.bar)
-        }
     }
 }
