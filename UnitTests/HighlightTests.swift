@@ -2,8 +2,8 @@ import XCTest
 @testable import Translator
 
 final class HighlightTests: XCTestCase {
-    private func matches(_ phrase: String, in text: String) -> [String] {
-        let regex = try! NSRegularExpression(pattern: SelectableText.phrasePattern(phrase), options: .caseInsensitive)
+    private func matches(_ phrase: String, in text: String, verb: Bool = false) -> [String] {
+        let regex = try! NSRegularExpression(pattern: SelectableText.phrasePattern(phrase, allowsSplit: verb), options: .caseInsensitive)
         let ns = text as NSString
         return regex.matches(in: text, range: NSRange(location: 0, length: ns.length)).map { ns.substring(with: $0.range) }
     }
@@ -20,7 +20,11 @@ final class HighlightTests: XCTestCase {
     }
 
     func testTwoWordPhrasalVerbSplits() {
-        XCTAssertEqual(matches("pick up", in: "Pick it up. Then pick up the rest."), ["Pick it up", "pick up"])
-        XCTAssertTrue(matches("pick up", in: "pick a very long list of things up").isEmpty, "gap is capped at three words")
+        XCTAssertEqual(matches("pick up", in: "Pick it up. Then pick up the rest.", verb: true), ["Pick it up", "pick up"])
+        XCTAssertTrue(matches("pick up", in: "pick a very long list of things up", verb: true).isEmpty, "gap is capped at three words")
+    }
+
+    func testNounPhraseMatchesOnlyAdjacently() {
+        XCTAssertEqual(matches("coffee table", in: "The coffee on this table is cold. A coffee table."), ["coffee table"])
     }
 }

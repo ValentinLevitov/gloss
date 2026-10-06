@@ -26,6 +26,7 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 - Prompt template and helper strings are in English; the answer language comes from the language settings.
 
 ### Fixed
+- Review follow-ups: send is disabled while dictating; the send icon differs between ask and translate; the draft field is actually kept stable (`.equatable()`); noun phrases match adjacently and only verbs may be split by an object; phrase regexes are compiled once; widgets reload when cards change; the camera quick action no longer sticks on devices without a camera; key verification runs once per trigger.
 - The thread jumped when the keyboard was dismissed, so a long-press landed on the wrong text; the view now only follows a reply while it streams.
 - Backspace after swipe-typing deleted letter by letter instead of the whole word: the text field is no longer rebuilt on every keystroke.
 - Settings (model, languages) were only saved by the Done button; dismissing the sheet by swipe discarded them. They now apply as soon as they change.

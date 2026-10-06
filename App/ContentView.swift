@@ -149,8 +149,12 @@ struct ContentView: View {
 
     /// Quick action / widget "Translate with camera".
     private func openCameraIfRequested() {
-        guard QuickActions.shared.pendingCamera, CameraPicker.isAvailable else { return }
+        guard QuickActions.shared.pendingCamera else { return }
         QuickActions.shared.pendingCamera = false
+        guard CameraPicker.isAvailable else {
+            session.errorMessage = String(localized: "This device has no camera.")
+            return
+        }
         showSettings = false
         showCards = false
         showHistory = false
@@ -202,7 +206,7 @@ private struct DictationBridge: ViewModifier {
 /// One-tap way into study mode, shown above the composer while there are cards to learn.
 private struct StudyBanner: View {
     @Binding var isPresented: Bool
-    private var count: Int { CardStore.shared.cards.filter { !$0.isLearned }.count }
+    private var count: Int { CardStore.shared.unlearnedCount }
 
     var body: some View {
         if count > 0 {

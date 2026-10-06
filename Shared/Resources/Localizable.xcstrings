@@ -9055,6 +9055,16 @@
           }
         }
       }
+    },
+    "This device has no camera.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "На этом устройстве нет камеры."
+          }
+        }
+      }
     }
   }
 }

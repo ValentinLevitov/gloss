@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import WidgetKit
 
 struct FlashCard: Identifiable, Codable, Hashable {
     struct Form: Codable, Hashable {
@@ -114,6 +115,8 @@ final class CardStore {
     private(set) var wordIndex: [String: FlashCard] = [:]
     /// Multi-word forms only (underline, matched whole).
     private(set) var phraseIndex: [String: FlashCard] = [:]
+    /// Compiled once per index rebuild; highlighting runs them on every text render.
+    private(set) var phraseMatchers: [(NSRegularExpression, FlashCard)] = []
 
     private let fileURL: URL
 
@@ -207,7 +210,11 @@ final class CardStore {
             try? data.write(to: fileURL, options: .atomic)
         }
         rebuildIndex()
+        WidgetCenter.shared.reloadAllTimelines()
     }
+
+    /// Cards still being learned; one definition for the banner, the quick action, the widget and study mode.
+    var unlearnedCount: Int { cards.filter { !$0.isLearned }.count }
 
     private func rebuildIndex() {
         var map: [String: FlashCard] = [:], words: [String: FlashCard] = [:], phrases: [String: FlashCard] = [:]
@@ -220,6 +227,11 @@ final class CardStore {
         index = map
         wordIndex = words
         phraseIndex = phrases
+        phraseMatchers = phrases.compactMap { phrase, card in
+            let isVerb = card.partOfSpeech.lowercased().contains("verb")
+            let pattern = SelectableText.phrasePattern(phrase, allowsSplit: isVerb)
+            return (try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)).map { ($0, card) }
+        }
         version += 1
     }
 }

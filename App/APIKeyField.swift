@@ -31,20 +31,15 @@ struct APIKeyField: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .focused($focused)
-                .onSubmit { Task { await verify() } }
+                .onSubmit { scheduleVerify(delay: 0) }
                 .onChange(of: focused) { _, isFocused in
-                    if !isFocused, trimmed != KeychainStore.apiKey(for: provider) ?? "" { Task { await verify() } }
+                    if !isFocused, trimmed != KeychainStore.apiKey(for: provider) ?? "" { scheduleVerify(delay: 0) }
                 }
                 // Verify as the user types or pastes, without waiting for Return or focus to move.
                 .onChange(of: key) { _, _ in
-                    verifyTask?.cancel()
                     guard trimmed != KeychainStore.apiKey(for: provider) ?? "" || status == .none else { return }
-                    status = trimmed.isEmpty ? .none : status
-                    verifyTask = Task {
-                        try? await Task.sleep(for: .milliseconds(600))
-                        guard !Task.isCancelled else { return }
-                        await verify()
-                    }
+                    if trimmed.isEmpty { status = .none }
+                    scheduleVerify(delay: 600)
                 }
 
             switch status {
@@ -60,13 +55,13 @@ struct APIKeyField: View {
 
             if trimmed.isEmpty {
                 PasteButton(payloadType: String.self) { strings in
-                    if let pasted = strings.first { key = pasted; Task { await verify() } }
+                    if let pasted = strings.first { key = pasted; scheduleVerify(delay: 0) }
                 }
                 .labelStyle(.iconOnly)
                 .buttonBorderShape(.circle)
                 .controlSize(.small)
             } else {
-                Button { key = ""; Task { await verify() } } label: { Image(systemName: "xmark.circle.fill") }
+                Button { key = ""; scheduleVerify(delay: 0) } label: { Image(systemName: "xmark.circle.fill") }
                     .buttonStyle(.borderless)
                     .foregroundStyle(.secondary)
             }
@@ -82,7 +77,7 @@ struct APIKeyField: View {
             HStack {
                 Text(message).font(.footnote).foregroundStyle(.red)
                 Spacer()
-                Button("Retry") { Task { await verify() } }.font(.footnote)
+                Button("Retry") { scheduleVerify(delay: 0) }.font(.footnote)
             }
         case .ok(let count):
             Text("Key works · \(count) models available").font(.footnote).foregroundStyle(.secondary)
@@ -90,8 +85,18 @@ struct APIKeyField: View {
             Text("Checking the key…").font(.footnote).foregroundStyle(.secondary)
         case .none:
             if !trimmed.isEmpty {
-                Button("Verify key") { Task { await verify() } }.font(.footnote)
+                Button("Verify key") { scheduleVerify(delay: 0) }.font(.footnote)
             }
+        }
+    }
+
+    /// Single entry point for every trigger, so a paste followed by the debounce (or Return) verifies once.
+    private func scheduleVerify(delay: Int) {
+        verifyTask?.cancel()
+        verifyTask = Task {
+            if delay > 0 { try? await Task.sleep(for: .milliseconds(delay)) }
+            guard !Task.isCancelled else { return }
+            await verify()
         }
     }
 

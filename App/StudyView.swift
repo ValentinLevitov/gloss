@@ -13,7 +13,7 @@ struct StudyView: View {
     @State private var synthesizer = AVSpeechSynthesizer()
 
     private var store: CardStore { CardStore.shared }
-    private var remaining: Int { store.cards.filter { !$0.isLearned }.count }
+    private var remaining: Int { store.unlearnedCount }
 
     var body: some View {
         NavigationStack {

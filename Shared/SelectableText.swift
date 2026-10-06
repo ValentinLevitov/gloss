@@ -70,8 +70,7 @@ struct SelectableText: UIViewRepresentable {
         let string = text.string as NSString
         let full = NSRange(location: 0, length: string.length)
 
-        for (phrase, card) in store.phraseIndex {
-            guard let regex = try? NSRegularExpression(pattern: Self.phrasePattern(phrase), options: .caseInsensitive) else { continue }
+        for (regex, card) in store.phraseMatchers {
             for match in regex.matches(in: text.string, range: full) {
                 text.addAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue,
                                     .underlineColor: tint(for: card)], range: match.range)
@@ -86,9 +85,9 @@ struct SelectableText: UIViewRepresentable {
         }
     }
 
-    /// "pick something up" → pick, then 1–3 words, then up. A two-word phrasal verb without a written slot
-    /// ("pick up") also allows an object in between, so "pick him up" lights up too.
-    static func phrasePattern(_ phrase: String) -> String {
+    /// "pick something up" → pick, then 1–3 words, then up. A two-word *verb* without a written slot
+    /// ("pick up") also allows an object in between, so "pick him up" lights up too; noun phrases match adjacently.
+    static func phrasePattern(_ phrase: String, allowsSplit: Bool = false) -> String {
         let gap = "(?:\\s+\\S+){0,3}?"
         let words = phrase.split(separator: " ").map(String.init)
         var parts: [String] = []
@@ -100,7 +99,7 @@ struct SelectableText: UIViewRepresentable {
             }
         }
         var body = parts.joined()
-        if words.count == 2, !words.contains(where: { FlashCard.slotWords.contains($0.lowercased()) }) {
+        if allowsSplit, words.count == 2, !words.contains(where: { FlashCard.slotWords.contains($0.lowercased()) }) {
             body = NSRegularExpression.escapedPattern(for: words[0]) + gap + "\\s+" + NSRegularExpression.escapedPattern(for: words[1])
         }
         return "(?<!\\p{L})" + body + "(?!\\p{L})"

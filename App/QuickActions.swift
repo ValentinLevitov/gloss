@@ -24,7 +24,7 @@ final class QuickActions {
                                       icon: UIApplicationShortcutIcon(systemImageName: "camera"),
                                       userInfo: nil),
         ]
-        let count = CardStore.shared.cards.filter { !$0.isLearned }.count
+        let count = CardStore.shared.unlearnedCount
         if count > 0 {
             items.append(UIApplicationShortcutItem(type: Self.studyType,
                                                    localizedTitle: String(localized: "Study words"),

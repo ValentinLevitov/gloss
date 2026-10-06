@@ -59,6 +59,7 @@ struct ComposerView: View {
                     .modifier(FieldChrome())
                 } else {
                     DraftField(placeholder: placeholder, text: $session.draft, focused: focused)
+                        .equatable()
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .modifier(FieldChrome())
@@ -134,11 +135,12 @@ struct ComposerView: View {
                     Button { sendQuestion() } label: { Label("Ask a question instead", systemImage: "bubble.left") }
                 }
             } label: {
-                Image(systemName: asks ? "arrow.up.circle.fill" : "arrow.up.circle.fill").font(.title)
+                Image(systemName: asks ? "bubble.left.circle.fill" : "arrow.up.circle.fill").font(.title)
             } primaryAction: {
                 if asks { sendQuestion() } else { send { session.translate($0) } }
             }
-            .disabled(session.quote == nil && !hasDraft)
+            // Not while dictating: the transcript is still being written into the draft.
+            .disabled((session.quote == nil && !hasDraft) || isRecording)
         }
     }
 
@@ -177,14 +179,17 @@ private struct BarChrome: ViewModifier {
     }
 }
 
-/// The text field on its own, so the composer re-rendering on every keystroke does not rebuild it
-/// (a rebuilt field loses the keyboard's word context: backspace after swipe-typing deletes letters instead of the word).
+/// The text field on its own, wrapped with `.equatable()` at the call site so the composer re-rendering on
+/// every keystroke does not rebuild it (a rebuilt field loses the keyboard's word context: backspace after
+/// swipe-typing deletes letters instead of the word). The placeholder is part of the identity so it can change.
 private struct DraftField: View, Equatable {
     let placeholder: LocalizedStringKey
     @Binding var text: String
     var focused: FocusState<Bool>.Binding
 
-    static func == (a: DraftField, b: DraftField) -> Bool { a.text == b.text }
+    static func == (a: DraftField, b: DraftField) -> Bool {
+        a.text == b.text && "\(a.placeholder)" == "\(b.placeholder)"
+    }
 
     var body: some View {
         TextField(placeholder, text: $text, axis: .vertical)
