@@ -2,7 +2,7 @@
 
 All notable changes to Gloss are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased] — 1.1.0
+## [1.1.0] — 2026-10-07
 
 ### Added
 - Flashcards: "Add to cards" on any word or phrase (up to 8 words, so idioms qualify) — in the sheet header, next to a translated word in the thread, and in the text selection menu. Cards are built by the model in dictionary form (singular, infinitive; object slots as "someone"/"something"), with part of speech, IPA, translations, forms, examples and CEFR level.
@@ -50,5 +50,5 @@ First App Store release (build 3), approved 2026-09-28.
 - Photo translation with on-device text recognition (camera or library).
 - Language pair setting (my language / foreign language), editable system prompt, history, share-sheet extension, English and Russian UI, onboarding with a button that opens the Default Apps settings.
 
-[Unreleased]: https://github.com/ValentinLevitov/gloss/compare/v1.0.0...HEAD
+[1.1.0]: https://github.com/ValentinLevitov/gloss/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ValentinLevitov/gloss/releases/tag/v1.0.0
