@@ -29,6 +29,8 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Gloss
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleLocalizations: [en, ru, de, fr, es, it, pt-BR, uk, pl, tr, ja, ko, zh-Hans]
         ITSAppUsesNonExemptEncryption: false
         NSCameraUsageDescription: Take a photo of text to translate it.
@@ -67,6 +69,8 @@ targets:
       path: TranslationExtension/Info.plist
       properties:
         CFBundleDisplayName: Gloss
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         EXAppExtensionAttributes:
           EXExtensionPointIdentifier: com.apple.public.translation-ui-provider
         com.apple.developer.translation-ui-provider.network-access: true
@@ -88,6 +92,8 @@ targets:
       path: ShareExtension/Info.plist
       properties:
         CFBundleDisplayName: Gloss
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
@@ -112,6 +118,8 @@ targets:
       path: Widgets/Info.plist
       properties:
         CFBundleDisplayName: Gloss
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     entitlements:
