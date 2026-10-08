@@ -2,12 +2,20 @@
 
 Gloss is an iOS translator that becomes the system translation app: select text in Books, Safari or any other app, tap **Translate**, and the translation streams in from the AI model you choose — with your own API key.
 
+<p align="center">
+  <img src="docs/images/sheet.png" width="260" alt="The Gloss sheet over Apple Books: the selected phrase pinned at the top, the idiom underlined, the translation below">
+  <img src="docs/images/thread.png" width="260" alt="The thread: card words highlighted, phrases underlined, an explanation of an idiom">
+  <img src="docs/images/study.png" width="260" alt="Study mode: one card with the word in context">
+</p>
+
 - **Translate in context.** Every fragment goes into one thread, so the model keeps the names, terms and style of what you are reading.
 - **Explain and discuss.** Select a word in the original or the translation → *Explain*, or *Discuss* to ask your own question.
 - **Dictionary cards** for single words: translations, IPA, meanings by frequency, nuances.
-- **Flashcards & study mode.** *Add to cards* builds a card in the dictionary form (singular, infinitive) with forms, examples and CEFR level; words with cards are highlighted in every translation. Swipe through cards to learn them.
+- **Flashcards & study mode.** *Add to cards* builds a card in the dictionary form (singular, infinitive; idioms and phrasal verbs with their object slot) with forms, examples and CEFR level; words with cards are highlighted in every translation, whole phrases are underlined. Swipe through cards to learn them; forgotten words come back sooner.
 - **Bring your own key.** Anthropic, OpenAI, Google Gemini, DeepSeek or xAI. Model lists are fetched live. Keys stay in the device Keychain; text goes straight to the provider. No backend, no analytics.
-- **Photo translation** (on-device OCR), dictation, editable prompt, any language pair.
+- **Photo translation** (on-device OCR), dictation, editable prompt, any language pair, lock-screen widgets, UI in 13 languages.
+
+Available on the App Store: **Gloss: AI Translator**.
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed in each version.
 
