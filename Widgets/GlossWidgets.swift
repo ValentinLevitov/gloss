@@ -4,6 +4,7 @@ import WidgetKit
 @main
 struct GlossWidgets: WidgetBundle {
     var body: some Widget {
+        ClipboardWidget()
         CameraWidget()
         StudyWidget()
     }
@@ -27,6 +28,50 @@ private struct StaticProvider: TimelineProvider {
               let data = try? Data(contentsOf: dir.appendingPathComponent("cards.json")),
               let cards = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return 0 }
         return cards.filter { $0["learnedAt"] == nil }.count
+    }
+}
+
+/// Lock-screen / home-screen button: opens the app and translates whatever is on the clipboard.
+struct ClipboardWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "com.vlevitov.translator.clipboard", provider: StaticProvider()) { _ in
+            ClipboardWidgetView()
+                .widgetURL(URL(string: "gloss://clipboard"))
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Translate clipboard")
+        .description("Translate the text you just copied.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .systemSmall])
+    }
+}
+
+private struct ClipboardWidgetView: View {
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        switch family {
+        case .accessoryCircular:
+            ZStack {
+                AccessoryWidgetBackground()
+                Image(systemName: "doc.on.clipboard").font(.title2)
+            }
+        case .accessoryRectangular:
+            HStack {
+                Image(systemName: "doc.on.clipboard").font(.title2)
+                VStack(alignment: .leading) {
+                    Text("Gloss").font(.headline)
+                    Text("Translate clipboard").font(.caption)
+                }
+            }
+        default:
+            VStack(alignment: .leading, spacing: 8) {
+                Image(systemName: "doc.on.clipboard").font(.largeTitle)
+                Spacer()
+                Text("Translate").font(.headline)
+                Text("clipboard").font(.subheadline).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
     }
 }
 

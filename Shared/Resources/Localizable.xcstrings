@@ -9065,6 +9065,26 @@
           }
         }
       }
+    },
+    "Translate clipboard": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевести буфер обмена"
+          }
+        }
+      }
+    },
+    "The clipboard has no text.": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В буфере обмена нет текста."
+          }
+        }
+      }
     }
   }
 }

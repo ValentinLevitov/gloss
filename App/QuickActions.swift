@@ -9,15 +9,22 @@ final class QuickActions {
     static let shared = QuickActions()
     static let studyType = "com.vlevitov.translator.study"
     static let cameraType = "com.vlevitov.translator.camera"
+    static let clipboardType = "com.vlevitov.translator.clipboard"
     static let cameraURL = URL(string: "gloss://camera")!
 
     /// Set when the app was opened through a quick action or URL; the UI consumes and clears them.
     var pendingStudy = false
     var pendingCamera = false
+    var pendingClipboard = false
 
     /// Publishes the "Study words" item with the current count; called whenever the app becomes active.
     func refresh() {
         var items = [
+            UIApplicationShortcutItem(type: Self.clipboardType,
+                                      localizedTitle: String(localized: "Translate clipboard"),
+                                      localizedSubtitle: nil,
+                                      icon: UIApplicationShortcutIcon(systemImageName: "doc.on.clipboard"),
+                                      userInfo: nil),
             UIApplicationShortcutItem(type: Self.cameraType,
                                       localizedTitle: String(localized: "Translate with camera"),
                                       localizedSubtitle: nil,
@@ -39,6 +46,7 @@ final class QuickActions {
         switch item.type {
         case Self.studyType: pendingStudy = true
         case Self.cameraType: pendingCamera = true
+        case Self.clipboardType: pendingClipboard = true
         default: return false
         }
         return true
@@ -50,6 +58,7 @@ final class QuickActions {
         switch url.host {
         case "camera": pendingCamera = true
         case "study": pendingStudy = true
+        case "clipboard": pendingClipboard = true
         default: return false
         }
         return true

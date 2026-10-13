@@ -104,9 +104,11 @@ struct ContentView: View {
                 QuickActions.shared.refresh()
                 openStudyIfRequested()
                 openCameraIfRequested()
+                translateClipboardIfRequested()
             }
             .onChange(of: QuickActions.shared.pendingStudy) { _, _ in openStudyIfRequested() }
             .onChange(of: QuickActions.shared.pendingCamera) { _, _ in openCameraIfRequested() }
+            .onChange(of: QuickActions.shared.pendingClipboard) { _, _ in translateClipboardIfRequested() }
         }
         .modifier(DictationBridge(recorder: recorder, session: session, focused: $composerFocused))
     }
@@ -145,6 +147,21 @@ struct ContentView: View {
         showCards = false
         showHistory = false
         showStudy = true
+    }
+
+    /// Quick action / widget "Translate clipboard": one tap from the lock screen to a translation.
+    private func translateClipboardIfRequested() {
+        guard QuickActions.shared.pendingClipboard else { return }
+        QuickActions.shared.pendingClipboard = false
+        showSettings = false; showCards = false; showHistory = false; showStudy = false; showOnboarding = false
+        // Programmatic read: iOS may ask once unless "Paste from Other Apps" is set to Allow for Gloss.
+        guard let text = UIPasteboard.general.string?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else {
+            session.errorMessage = String(localized: "The clipboard has no text.")
+            return
+        }
+        composerFocused = false
+        session.cancel()
+        session.translate(text)
     }
 
     /// Quick action / widget "Translate with camera".

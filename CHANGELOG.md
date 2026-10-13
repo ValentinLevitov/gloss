@@ -2,6 +2,11 @@
 
 All notable changes to Gloss are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased] — 1.2.0
+
+### Added
+- "Translate clipboard": one tap from the app icon menu, a lock-screen/home-screen widget, or a Shortcut (Action Button / Back Tap) opens Gloss and translates whatever was copied — including text copied on a Mac via Universal Clipboard.
+
 ## [1.1.0] — 2026-10-07
 
 ### Added
@@ -50,5 +55,6 @@ First App Store release (build 3), approved 2026-09-28.
 - Photo translation with on-device text recognition (camera or library).
 - Language pair setting (my language / foreign language), editable system prompt, history, share-sheet extension, English and Russian UI, onboarding with a button that opens the Default Apps settings.
 
+[Unreleased]: https://github.com/ValentinLevitov/gloss/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/ValentinLevitov/gloss/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ValentinLevitov/gloss/releases/tag/v1.0.0
