@@ -10,6 +10,7 @@ struct StudyView: View {
     @State private var reviewed = 0
     @State private var recent: [UUID] = []
     @State private var graduatedWord: String?
+    @State private var showDetails = false
     @State private var synthesizer = AVSpeechSynthesizer()
 
     private var store: CardStore { CardStore.shared }
@@ -72,6 +73,20 @@ struct StudyView: View {
                 }
             }
             .onAppear { if card == nil { card = store.nextToStudy(excluding: []) } }
+            .sheet(isPresented: $showDetails) {
+                if let card {
+                    NavigationStack {
+                        CardDetailView(cardID: card.id)
+                            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showDetails = false } } }
+                    }
+                }
+            }
+            .onChange(of: showDetails) { _, shown in
+                // The card may have been deleted from the detail sheet.
+                if !shown, let card, !store.cards.contains(where: { $0.id == card.id }) {
+                    self.card = store.nextToStudy(excluding: recent)
+                }
+            }
         }
     }
 
@@ -89,7 +104,7 @@ struct StudyView: View {
             Spacer()
 
             if let example = card.examples.first {
-                contextLine(Self.window(example.text, around: card.allForms), card: card)
+                contextLine(Self.window(example.text, around: card.allForms, allowsSplit: card.isVerb), card: card)
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -125,8 +140,13 @@ struct StudyView: View {
 
             Spacer()
 
-            Button { speak(card) } label: { Image(systemName: "speaker.wave.2.fill").font(.title3) }
-                .foregroundStyle(.secondary)
+            HStack(spacing: 44) {
+                Button { speak(card) } label: { Image(systemName: "speaker.wave.2.fill").font(.title3) }
+                    .accessibilityLabel("Pronounce")
+                Button { showDetails = true } label: { Image(systemName: "info.circle").font(.title3) }
+                    .accessibilityLabel("Card details")
+            }
+            .foregroundStyle(.secondary)
         }
         .padding(24)
         .frame(maxWidth: .infinity)
@@ -134,11 +154,12 @@ struct StudyView: View {
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
     }
 
-    /// Keeps the sentence readable on the card: at most `limit` words, centred on the first form of the word.
-    static func window(_ sentence: String, around forms: Set<String>, limit: Int = 14) -> String {
+    /// Keeps the sentence readable on the card: at most `limit` words, centred on the card's word or phrase.
+    static func window(_ sentence: String, around forms: Set<String>, allowsSplit: Bool = false, limit: Int = 14) -> String {
         let words = sentence.split(separator: " ").map(String.init)
         guard words.count > limit else { return sentence }
-        let hit = words.firstIndex { forms.contains($0.trimmingCharacters(in: .punctuationCharacters).lowercased()) } ?? 0
+        let hits = FlashCard.matchedTokens(in: words, forms: forms, allowsSplit: allowsSplit)
+        let hit = hits.isEmpty ? 0 : (hits.min()! + hits.max()!) / 2
         var start = max(0, hit - limit / 2)
         let end = min(words.count, start + limit)
         start = max(0, end - limit)
@@ -150,12 +171,12 @@ struct StudyView: View {
 
     /// The example sentence with the card's word marked the way it is in translations.
     private func contextLine(_ sentence: String, card: FlashCard) -> Text {
-        let forms = card.allForms
+        let tokens = sentence.split(separator: " ", omittingEmptySubsequences: false).map(String.init)
+        let marked = card.matchedTokens(in: tokens)
         var result = Text("")
-        for (i, token) in sentence.split(separator: " ", omittingEmptySubsequences: false).enumerated() {
-            let word = token.trimmingCharacters(in: .punctuationCharacters).lowercased()
-            var piece = Text(String(token))
-            piece = forms.contains(word) ? piece.foregroundColor(.orange).bold() : piece.foregroundColor(.secondary)
+        for (i, token) in tokens.enumerated() {
+            var piece = Text(token)
+            piece = marked.contains(i) ? piece.foregroundColor(.orange).bold() : piece.foregroundColor(.secondary)
             result = result + (i == 0 ? piece : Text(" ") + piece)
         }
         return result

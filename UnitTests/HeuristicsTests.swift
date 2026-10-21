@@ -30,6 +30,20 @@ final class HeuristicsTests: XCTestCase {
         XCTAssertEqual(StudyView.window("short one", around: ["one"]), "short one")
     }
 
+    func testStudyContextMatchesInflectedPhrases() {
+        let sentence = "Confident now that they were close on the heels of the tribe, Mackenzie's column spurred forward."
+        let tokens = sentence.split(separator: " ").map(String.init)
+        let forms: Set<String> = ["spur forward", "spurred forward", "spurs forward"]
+        XCTAssertEqual(FlashCard.matchedTokens(in: tokens, forms: forms, allowsSplit: true), [14, 15])
+        let shown = StudyView.window(sentence, around: forms, allowsSplit: true, limit: 8)
+        XCTAssertTrue(shown.contains("spurred forward"))
+
+        let split = "I will pick the kids up later.".split(separator: " ").map(String.init)
+        XCTAssertEqual(FlashCard.matchedTokens(in: split, forms: ["pick up"], allowsSplit: true), [2, 5])
+        XCTAssertEqual(FlashCard.matchedTokens(in: split, forms: ["pick up"], allowsSplit: false), [])
+        XCTAssertEqual(FlashCard.matchedTokens(in: split, forms: ["pick something up"], allowsSplit: false), [2, 5])
+    }
+
     func testTextSizeMapping() {
         XCTAssertNil(TextSize.system.dynamicTypeSize)
         XCTAssertEqual(TextSize.xxLarge.dynamicTypeSize, .accessibility2)

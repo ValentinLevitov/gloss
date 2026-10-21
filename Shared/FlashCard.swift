@@ -97,6 +97,60 @@ struct FlashCard: Identifiable, Codable, Hashable {
         for form in forms { set.insert(form.value.lowercased()) }
         return set
     }
+
+    var isVerb: Bool { partOfSpeech.lowercased().contains("verb") }
+
+    /// Indexes of the sentence tokens covered by one of the card's forms ("spurred forward" in
+    /// "the column spurred forward."). Mirrors `SelectableText.phrasePattern`: slot words span 1–3 tokens
+    /// (not marked), and a two-word verb may be split by up to three words ("pick him up").
+    func matchedTokens(in tokens: [String]) -> Set<Int> {
+        Self.matchedTokens(in: tokens, forms: allForms, allowsSplit: isVerb)
+    }
+
+    static func matchedTokens(in tokens: [String], forms: Set<String>, allowsSplit: Bool) -> Set<Int> {
+        let words = tokens.map { $0.trimmingCharacters(in: .punctuationCharacters).lowercased() }
+        let patterns = forms.map { $0.split(separator: " ").map(String.init) }
+            .filter { !$0.isEmpty }
+            .sorted { $0.count > $1.count }
+        var matched = Set<Int>()
+        for pattern in patterns {
+            var i = 0
+            while i < words.count {
+                if let hit = match(pattern, from: 0, at: i, in: words, allowsSplit: allowsSplit, marked: []) {
+                    matched.formUnion(hit)
+                    i = (hit.max() ?? i) + 1
+                } else {
+                    i += 1
+                }
+            }
+        }
+        return matched
+    }
+
+    private static func match(_ pattern: [String], from p: Int, at i: Int, in words: [String],
+                              allowsSplit: Bool, marked: Set<Int>) -> Set<Int>? {
+        if p == pattern.count { return marked }
+        guard i < words.count else { return nil }
+        let word = pattern[p]
+        if slotWords.contains(word) {
+            for gap in 1...3 {
+                if let hit = match(pattern, from: p + 1, at: i + gap, in: words, allowsSplit: allowsSplit, marked: marked) {
+                    return hit
+                }
+            }
+            return nil
+        }
+        if words[i] == word,
+           let hit = match(pattern, from: p + 1, at: i + 1, in: words, allowsSplit: allowsSplit, marked: marked.union([i])) {
+            return hit
+        }
+        if allowsSplit, p == 1, pattern.count == 2 {
+            for gap in 1...3 where i + gap < words.count && words[i + gap] == word {
+                return marked.union([i + gap])
+            }
+        }
+        return nil
+    }
 }
 
 /// Cards live in a JSON file in the App Group so the app and the extensions share them.
@@ -228,8 +282,7 @@ final class CardStore {
         wordIndex = words
         phraseIndex = phrases
         phraseMatchers = phrases.compactMap { phrase, card in
-            let isVerb = card.partOfSpeech.lowercased().contains("verb")
-            let pattern = SelectableText.phrasePattern(phrase, allowsSplit: isVerb)
+            let pattern = SelectableText.phrasePattern(phrase, allowsSplit: card.isVerb)
             return (try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)).map { ($0, card) }
         }
         version += 1

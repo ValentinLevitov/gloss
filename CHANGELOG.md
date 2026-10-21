@@ -6,6 +6,10 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 
 ### Added
 - "Translate clipboard": one tap from the app icon menu, a lock-screen/home-screen widget, or a Shortcut (Action Button / Back Tap) opens Gloss and translates whatever was copied — including text copied on a Mac via Universal Clipboard.
+- Study mode: an info button on the card opens the full card (forms, all examples, note).
+
+### Fixed
+- Study mode: the example sentence is centred on and highlights inflected and split forms of phrases ("spurred forward", "pick him up"), not just the headword.
 
 ## [1.1.0] — 2026-10-07
 

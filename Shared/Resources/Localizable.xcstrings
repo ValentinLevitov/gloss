@@ -9085,6 +9085,26 @@
           }
         }
       }
+    },
+    "Card details": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подробности карточки"
+          }
+        }
+      }
+    },
+    "Pronounce": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Произнести"
+          }
+        }
+      }
     }
   }
 }
