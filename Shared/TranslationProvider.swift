@@ -161,6 +161,68 @@ enum ProviderHTTP {
         }
     }
 
+    /// SSE body split into lines at the byte level. A multi-byte character that a server splits across two
+    /// events (the tail of one delta's text, the head of the next) is stitched back together instead of
+    /// turning into two U+FFFD, which `AsyncBytes.lines` would produce.
+    static func sseLines(_ bytes: URLSession.AsyncBytes) -> AsyncThrowingStream<String, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    var line = Data()
+                    var carry = Data()
+                    for try await byte in bytes {
+                        if byte == UInt8(ascii: "\n") {
+                            continuation.yield(repairSplitUTF8(line, carry: &carry))
+                            line.removeAll(keepingCapacity: true)
+                        } else {
+                            line.append(byte)
+                        }
+                    }
+                    if !line.isEmpty { continuation.yield(repairSplitUTF8(line, carry: &carry)) }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+
+    /// Moves an incomplete trailing UTF-8 sequence of `line` into `carry`, and prepends the previous carry to
+    /// orphan continuation bytes in this line when together they form the character that was split.
+    static func repairSplitUTF8(_ input: Data, carry: inout Data) -> String {
+        var line = Array(input)
+        var i = 0
+        while i < line.count {
+            let byte = line[i]
+            let expected = byte < 0x80 ? 1 : byte >= 0xF0 ? 4 : byte >= 0xE0 ? 3 : byte >= 0xC0 ? 2 : 0
+            if expected == 0 {
+                // Continuation byte without a lead: the rest of a character the previous line started.
+                var end = i
+                while end < line.count, line[end] & 0xC0 == 0x80 { end += 1 }
+                let lead = carry.first ?? 0
+                let needed = lead >= 0xF0 ? 4 : lead >= 0xE0 ? 3 : lead >= 0xC0 ? 2 : 0
+                if !carry.isEmpty, carry.count + (end - i) == needed {
+                    line.insert(contentsOf: carry, at: i)
+                    end += carry.count
+                }
+                carry.removeAll()
+                i = end
+                continue
+            }
+            var length = 1
+            while length < expected, i + length < line.count, line[i + length] & 0xC0 == 0x80 { length += 1 }
+            if length < expected {
+                // Cut short (by the end of the line or by the closing quote of the JSON string): carry it over.
+                carry = Data(line[i..<i + length])
+                line.removeSubrange(i..<i + length)
+                continue
+            }
+            i += length
+        }
+        return String(decoding: line, as: UTF8.self)
+    }
+
     /// Drops dated snapshots (`…-2025-08-07`, `…-20251001`) when an undated alias of the same model is present.
     static func collapseSnapshots(_ models: [ModelOption]) -> [ModelOption] {
         let ids = Set(models.map(\.id))

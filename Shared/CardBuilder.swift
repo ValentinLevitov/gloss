@@ -34,11 +34,19 @@ enum CardBuilder {
         {"headword":"","language":"","partOfSpeech":"","transcription":"","translations":[""],"forms":[{"label":"","value":""}],"examples":[{"text":"","translation":""}],"note":"","level":""}
         """
 
-        var reply = ""
-        for try await chunk in Providers.make(for: model).stream([ChatMessage(role: "user", content: prompt)], model: model) {
-            reply += chunk
+        let messages = [ChatMessage(role: "user", content: prompt)]
+        var reply = try await collect(Providers.make(for: model).stream(messages, model: model))
+        // A model occasionally emits a broken byte sequence inside a word; a second run is almost always clean.
+        if reply.contains("\u{FFFD}") {
+            reply = try await collect(Providers.make(for: model).stream(messages, model: model))
         }
         return try parse(reply, sourceWord: word)
+    }
+
+    private static func collect(_ stream: AsyncThrowingStream<String, Error>) async throws -> String {
+        var reply = ""
+        for try await chunk in stream { reply += chunk }
+        return reply
     }
 
     private static func detect(_ text: String) -> String? {

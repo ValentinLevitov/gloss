@@ -4,6 +4,21 @@ import Security
 enum AppGroup {
     static let id = "group.com.vlevitov.translator"
     static var defaults: UserDefaults { UserDefaults(suiteName: id) ?? .standard }
+
+    /// A shared data file. Files sit in `Library/` of the group container, which is where tools like
+    /// `devicectl` can read them from a development build; files from 1.1 at the container root are moved there.
+    static func fileURL(_ name: String) -> URL {
+        let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: id)
+            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let library = container.appendingPathComponent("Library", isDirectory: true)
+        try? FileManager.default.createDirectory(at: library, withIntermediateDirectories: true)
+        let url = library.appendingPathComponent(name)
+        let legacy = container.appendingPathComponent(name)
+        if !FileManager.default.fileExists(atPath: url.path), FileManager.default.fileExists(atPath: legacy.path) {
+            try? FileManager.default.moveItem(at: legacy, to: url)
+        }
+        return url
+    }
 }
 
 /// API keys live in the Keychain under the App Group access group so both the app and the extensions can read them.

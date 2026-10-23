@@ -47,6 +47,29 @@ final class ProviderStreamTests: XCTestCase {
         XCTAssertEqual(text, "Зовите меня")
     }
 
+    func testAnthropicStreamStitchesCharacterSplitAcrossEvents() async throws {
+        // "кукситься" with the bytes of "с" (D1 81) split between two deltas, as some servers emit them.
+        var body = Data("data: {\"type\":\"content_block_delta\",\"delta\":{\"type\":\"text_delta\",\"text\":\"куксить".utf8)
+        body.append(contentsOf: [0xD1])
+        body.append(Data("\"}}\n\ndata: {\"type\":\"content_block_delta\",\"delta\":{\"type\":\"text_delta\",\"text\":\"".utf8))
+        body.append(contentsOf: [0x81])
+        body.append(Data("я\"}}\n".utf8))
+        StubURLProtocol.handler = { _ in (200, body) }
+        let text = try await collect(AnthropicProvider().stream([ChatMessage(role: "user", content: "x")], model: model))
+        XCTAssertEqual(text, "кукситься")
+    }
+
+    func testSplitUTF8RepairLeavesValidAndTrulyBrokenBytesAlone() {
+        var carry = Data()
+        XCTAssertEqual(ProviderHTTP.repairSplitUTF8(Data("ok — ✓ 😀".utf8), carry: &carry), "ok — ✓ 😀")
+        XCTAssertTrue(carry.isEmpty)
+        // A stray continuation byte with nothing carried stays a replacement character.
+        XCTAssertEqual(ProviderHTTP.repairSplitUTF8(Data([0x61, 0x81, 0x62]), carry: &carry), "a\u{FFFD}b")
+        // Four-byte character split 1 + 3.
+        XCTAssertEqual(ProviderHTTP.repairSplitUTF8(Data([0x61, 0xF0]), carry: &carry), "a")
+        XCTAssertEqual(ProviderHTTP.repairSplitUTF8(Data([0x9F, 0x98, 0x80, 0x62]), carry: &carry), "😀b")
+    }
+
     func testAnthropicRefusalSurfacesAsError() async {
         StubURLProtocol.handler = { _ in
             (200, Data("data: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"refusal\"}}\n".utf8))

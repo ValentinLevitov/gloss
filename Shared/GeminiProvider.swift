@@ -38,7 +38,7 @@ struct GeminiProvider: TranslationProvider {
                 throw TranslationError.api(status: status, message: ProviderHTTP.errorMessage(from: data))
             }
 
-            for try await line in bytes.lines {
+            for try await line in ProviderHTTP.sseLines(bytes) {
                 guard line.hasPrefix("data:") else { continue }
                 let payload = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
                 guard let event = try? JSONSerialization.jsonObject(with: Data(payload.utf8)) as? [String: Any]

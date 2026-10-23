@@ -8,7 +8,11 @@ All notable changes to Gloss are recorded here. The format follows [Keep a Chang
 - "Translate clipboard": one tap from the app icon menu, a lock-screen/home-screen widget, or a Shortcut (Action Button / Back Tap) opens Gloss and translates whatever was copied — including text copied on a Mac via Universal Clipboard.
 - Study mode: an info button on the card opens the full card (forms, all examples, note).
 
+### Changed
+- Shared data files (thread, history, cards) moved into `Library/` of the App Group container; existing files are migrated on first launch.
+
 ### Fixed
+- A character split by the API between two streaming events (the tail of one chunk, the head of the next) no longer turns into two "�" in the text; a flashcard that still comes back with such garbage is rebuilt once automatically.
 - Study mode: the example sentence is centred on and highlights inflected and split forms of phrases ("spurred forward", "pick him up"), not just the headword.
 
 ## [1.1.0] — 2026-10-07

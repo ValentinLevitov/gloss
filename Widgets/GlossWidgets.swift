@@ -25,7 +25,9 @@ private struct StaticProvider: TimelineProvider {
     /// Reads the shared cards file directly; the widget process must not depend on app code.
     private func cardsToLearn() -> Int {
         guard let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.vlevitov.translator"),
-              let data = try? Data(contentsOf: dir.appendingPathComponent("cards.json")),
+              // 1.2 keeps the file in Library/; the root path is where 1.1 wrote it until the app moves it.
+              let data = (try? Data(contentsOf: dir.appendingPathComponent("Library/cards.json")))
+                ?? (try? Data(contentsOf: dir.appendingPathComponent("cards.json"))),
               let cards = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return 0 }
         return cards.filter { $0["learnedAt"] == nil }.count
     }

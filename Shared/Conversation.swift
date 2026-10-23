@@ -48,9 +48,7 @@ enum ConversationStore {
     }
 
     private static var fileURL: URL {
-        let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return dir.appendingPathComponent("thread.json")
+        AppGroup.fileURL("thread.json")
     }
 
     static func loadCurrent() -> [ThreadMessage] {

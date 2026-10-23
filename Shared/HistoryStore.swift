@@ -12,9 +12,7 @@ enum HistoryStore {
     private static let limit = 300
 
     private static var fileURL: URL {
-        let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return dir.appendingPathComponent("history.json")
+        AppGroup.fileURL("history.json")
     }
 
     static func load() -> [HistoryEntry] {

@@ -175,9 +175,7 @@ final class CardStore {
     private let fileURL: URL
 
     private static var defaultFileURL: URL {
-        let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return dir.appendingPathComponent("cards.json")
+        AppGroup.fileURL("cards.json")
     }
 
     private convenience init() { self.init(fileURL: Self.defaultFileURL) }
